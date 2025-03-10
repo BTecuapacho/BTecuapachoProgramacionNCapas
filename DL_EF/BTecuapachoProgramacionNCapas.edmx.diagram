@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="2396eba0082449f090aef8f5bfedc83e" Name="Diagram1" ZoomLevel="86">
+        <EntityTypeShape EntityType="BTecuapachoProgramacionNCapasModel.x" Width="1.5" PointX="0.5" PointY="1" />
+        <EntityTypeShape EntityType="BTecuapachoProgramacionNCapasModel.Usuario" Width="1.5" PointX="2.625" PointY="1.875" />
+        <AssociationConnector Association="BTecuapachoProgramacionNCapasModel.FK__Usuario__IdRol__239E4DCF" />
+        <EntityTypeShape EntityType="BTecuapachoProgramacionNCapasModel.Colonia" Width="1.5" PointX="7.25" PointY="1.875" />
+        <EntityTypeShape EntityType="BTecuapachoProgramacionNCapasModel.Estado" Width="1.5" PointX="11.75" PointY="1.875" />
+        <EntityTypeShape EntityType="BTecuapachoProgramacionNCapasModel.Municipio" Width="1.5" PointX="9.5" PointY="1.875" />
+        <AssociationConnector Association="BTecuapachoProgramacionNCapasModel.FK__Colonia__IdMunic__300424B4" />
+        <AssociationConnector Association="BTecuapachoProgramacionNCapasModel.FK__Municipio__IdEst__2D27B809" />
+        <EntityTypeShape EntityType="BTecuapachoProgramacionNCapasModel.Direccion" Width="1.5" PointX="5" PointY="1.5" />
+        <AssociationConnector Association="BTecuapachoProgramacionNCapasModel.FK__Direccion__IdCol__38996AB5" />
+        <AssociationConnector Association="BTecuapachoProgramacionNCapasModel.FK__Direccion__idUsu__33D4B598" />
+        <EntityTypeShape EntityType="BTecuapachoProgramacionNCapasModel.UsuarioGetAllView" Width="1.5" PointX="5.375" PointY="5.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

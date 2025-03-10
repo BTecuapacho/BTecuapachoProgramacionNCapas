@@ -1,0 +1,275 @@
+﻿@model ML.Usuario
+@{
+    ViewBag.Title = "GetAll";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.2/css/buttons.dataTables.css" />
+<div class="container my-4" id="searchPanel" style="display: none">
+    <div class="row">
+        <div class="col-12">
+            <div class="card p-4 shadow">
+                @using (Html.BeginForm("GetAll", "Usuario", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+                {
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-floating">
+                                @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control", @placeholder = "" })
+                                @Html.LabelFor(model => model.Nombre, new { @for = "floatingInput" })
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-floating">
+                                @Html.TextBoxFor(model => model.ApellidoPaterno, new { @class = "form-control", @placeholder = "" })
+                                @Html.LabelFor(model => model.ApellidoPaterno, new { @for = "floatingInput" })
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-floating">
+                                @Html.TextBoxFor(model => model.ApellidoMaterno, new { @class = "form-control", @placeholder = "" })
+                                @Html.LabelFor(model => model.ApellidoMaterno, new { @for = "floatingInput" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            @Html.DropDownListFor(model => model.Rol.IdRol, new SelectList(Model.Rol.Roles, "IdRol", "Nombre"), "Seleccione un rol", new { @class = "form-select" })
+                        </div>
+                        <div class="col-md-1">
+                            <button type="submit" class="rounded-pill btn btn-primary">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <h2>Usuarios</h2>
+    <div class="row mt-2 my-2">
+        <div class="col-6 text-start">
+            <a href="@Url.Action("Form", "Usuario")" class="btn btn-primary">
+                <i class="bi bi-person-plus-fill"></i>
+                <strong>Nuevo Usuario</strong>
+            </a>
+        </div>
+        <div class="col-6 text-end" id="actionButtons">
+            <button class="btn btn-primary" id="btnShow" onclick="Mostrar()">
+                <i class="bi bi-eye-fill"></i>
+                Mostrar Panel de Busqueda
+            </button> 
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="border-bottom title-part-padding">
+                    <h4 class="card-title my-2 text-center">Lista de usuarios</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        @if (Model.Usuarios.Count != 0)
+                        {
+                            <table id="usuarios" class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" scope="col">#</th>
+                                        <th class="text-center" scope="col">Nombre</th>
+                                        <th class="text-center" scope="col">Contacto</th>
+                                        <th class="text-center" scope="col">Fecha de Nacimiento</th>
+                                        <th class="text-center" scope="col">Sexo</th>
+                                        <th class="text-center" scope="col">Direccino</th>
+                                        <th class="text-center" scope="col">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int count = 0;
+                                    }
+                                    @foreach (ML.Usuario usuario in Model.Usuarios)
+                                    {
+                                        count++;
+                                        <tr>
+                                            <td class="text-center">
+                                                @count
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge text-bg-danger mb-1">
+                                                    <i class="bi bi-upc"></i> @usuario.CURP
+                                                </span>
+                                                @{
+                                                    string imgSexo = usuario.Sexo == "HO" ? "usuarioMasculino.png" : "usuarioFemenino.png";
+                                                    string src = usuario.Imagen != null ? "data:image/png;base64," + Convert.ToBase64String(usuario.Imagen) : "/content/imagenes/" + imgSexo;
+                                                }
+                                                <div class="text-center mb-1">
+                                                    <img style="width:15%" alt="Imagen @usuario.Nombre @usuario.ApellidoPaterno @usuario.ApellidoMaterno" src="@src" class="me-1" />
+                                                    @usuario.Nombre @usuario.ApellidoPaterno @usuario.ApellidoMaterno
+                                                </div>
+                                                <span class="badge badge text-bg-dark">
+                                                    <i class="bi bi-person-badge"></i>
+                                                    Rol: @usuario.Rol.Nombre
+                                                </span>
+                                                <span class="badge text-bg-secondary">
+                                                    <i class="bi bi-person-badge-fill"></i>
+                                                    Alias: @usuario.UserName
+                                                </span>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge text-bg-primary">
+                                                    @usuario.Email
+                                                </span><br />
+                                                <span class="badge text-bg-success me-1">
+                                                    <i class="bi bi-phone-fill"></i>
+                                                    @usuario.Celular
+                                                </span>
+                                                <span class="badge text-bg-success">
+                                                    <i class="bi bi-telephone-fill"></i>
+                                                    @usuario.Telefono
+                                                </span>
+                                            </td>
+                                            <td class="text-center">
+                                                <i class="bi bi-cake-fill"></i>
+                                                @usuario.FechaNacimiento
+                                            </td>
+                                            <td class="text-center">
+                                                    @if (usuario.Sexo == "HO")
+                                                    {
+                                                        <span class="badge text-bg-primary">
+                                                            <i class="bi bi-person-standing"> Masculino</i>
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge text-bg-danger">
+                                                            <i class="bi bi-person-standing-dress"> Femenino</i>
+                                                        </span>
+                                                    }
+                                            </td>
+                                            <td class="text-center">
+                                                calle @usuario.Direccion.Calle, Int. #@usuario.Direccion.NumeroInterior, Ext. #@usuario.Direccion.NumeroExterior, colonia @usuario.Direccion.Colonia.Nombre, C.P.  @usuario.Direccion.Colonia.CodigoPostal,<br />
+                                                @usuario.Direccion.Colonia.Municipio.Nombre, @usuario.Direccion.Colonia.Municipio.Estado.Nombre
+                                            </td>
+                                            <td class="text-center">
+                                                @if (usuario.Estatus)
+                                                {
+                                                    <a class="rounded-pill btn d-inline-flex align-items-center justify-content-center m-1">
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input" type="checkbox" id="@usuario.IdUsuario" checked onchange="CambiarEstatus(this)">
+                                                        </div>
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a class="rounded-pill btn d-inline-flex align-items-center justify-content-center m-1">
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input" type="checkbox" id="@usuario.IdUsuario" onchange="CambiarEstatus(this)">
+                                                        </div>
+                                                    </a>
+                                                }
+                                                <a href="@Url.Action("Form", "Usuario", new {IdUsuario = usuario.IdUsuario})" class="rounded-circle btn btn-warning d-inline-flex align-items-center justify-content-center text-light m-1">
+                                                    <i class="bi bi-pen-fill"></i>
+                                                </a>
+                                                <a href="@Url.Action("Delete", "Usuario", new {IdUsuario = usuario.IdUsuario})" class="rounded-circle btn btn-danger d-inline-flex align-items-center justify-content-center" onclick="return confirm('Desea el liminar ala usuario')">
+                                                    <i class="bi bi-trash-fill m-1"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        else
+                        {
+                            <div class="mt-2 alert alert-danger" role="alert">
+                                No se encontraron registros
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Scripts.Render("~/bundles/jquery")
+<script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.2/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.dataTables.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.2/js/buttons.print.min.js"></script>
+
+<script>
+    function CambiarEstatus(input) {
+        $.ajax({
+            url: "@Url.Action("CambiarEstatus", "Usuario")",
+            dataType: "json",
+            type: "POST",
+            data: {
+                IdUsuario: input.id,
+                Estatus: input.checked
+            },
+            success: function (result) {
+                result.Correct ? alert("El estatus del usuario a cambiado") : alert(result.ErrorMessage)
+            },
+            error: function (xhr) {
+                console.log(xhr)
+            }
+        })
+    }
+
+    function Mostrar() {
+        $('#searchPanel').show(1000);
+        $('#btnShow').remove()
+        var btnOcultar = $('<button class= "btn btn-primary" id = "btnHide" onclick = "Ocultar()"><i class="bi bi-eye-slash-fill"></i> Ocultar Panel de Busqueda</button >')
+        $('#actionButtons').append(btnOcultar)
+    }
+
+    function Ocultar() {
+        $('#searchPanel').hide(1000);
+        $('#btnHide').remove()
+        var btnMostrar = $('<button class= "btn btn-primary" id = "btnShow" onclick = "Mostrar()"><i class="bi bi-eye-fill"></i> Mostrar Panel de Busqueda</button>')
+        $('#actionButtons').append(btnMostrar)
+    }
+
+    $(document).ready(
+        $('#usuarios').DataTable({
+            layout: {
+                topStart: {
+                    buttons: [
+                        {
+                            extend: 'pdf',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4, 5]
+                            }
+                        },
+                        {
+                            extend: 'excel',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4, 5]
+                            }
+                        },
+                        {
+                            extend: 'print',
+                            exportOptions: {
+                                columns: [0, 1, 2, 3, 4, 5]
+                            }
+                        },
+                        'colvis'
+                    ]
+                }
+            },
+            language: {
+                url: '//cdn.datatables.net/plug-ins/2.2.2/i18n/es-ES.json',
+                "paginate": {
+                    "first": '<i class="bi bi-chevron-bar-left"></i>',
+                    "last": '<i class="bi bi-chevron-bar-right"></i>',
+                    "next": '<i class="bi bi-chevron-right"></i>',
+                    "previous": '<i class="bi bi-chevron-left"></i>'
+                },
+            }
+        })
+   )
+</script>
