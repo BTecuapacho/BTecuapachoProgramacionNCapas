@@ -1,4 +1,5 @@
-﻿using ML;
+﻿using DL_EF;
+using ML;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -410,6 +411,14 @@ namespace PL
             {
                 Console.WriteLine("Hubo un error: " + result.ErrorMessage);
             }
+        }
+
+        public static void AddMasivo()
+        {
+            ML.Result result = BL.Usuarios.CargaMasivaTXT();
+            Console.WriteLine(
+                result.Correct ? "La carga masiva se ejecuto de manera correcta" :
+                "Hubo un error: " + result.ErrorMessage);
         }
     }
 }

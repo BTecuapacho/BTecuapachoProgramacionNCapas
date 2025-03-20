@@ -4,6 +4,7 @@ using ML;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.IO;
@@ -922,53 +923,134 @@ namespace BL
             string ruta = @"C:\Users\digis\Documents\Benjamin_Tecuapacho_Mendez\StreamReaderTXT.txt";
             try
             {
+
                 StreamReader streamReader = new StreamReader(ruta);
                 string linea = "";
-                bool primeraLinea = true;
-                result.Objects = new List<object>();
+                string cavecera =  streamReader.ReadLine();
                 while((linea = streamReader.ReadLine()) != null)
                 {
-                    if (primeraLinea)
+                    string[] columna = linea.Split('|');
+                    ML.Usuario usuario = new ML.Usuario
                     {
-                        primeraLinea = false; continue;
-                    }
-                    string[] columna = linea.Split('\t');
-                    if (columna.Length > 20)
+                        Nombre = columna[0],
+                        ApellidoPaterno = columna[1],
+                        ApellidoMaterno = columna[2],
+                        Email = columna[3],
+                        FechaNacimiento = columna[4],
+                        Sexo = columna[5],
+                        Telefono = columna[6],
+                        Celular = columna[7],
+                        Estatus = Convert.ToBoolean(Convert.ToInt32(columna[8])),
+                        CURP = columna[9],
+                        UserName = columna[10],
+                        Rol = new ML.Rol { IdRol = Convert.ToInt32(columna[11]) },
+                        Direccion = new ML.Direccion{
+                            Calle = columna[12],
+                            NumeroInterior = columna[13],
+                            NumeroExterior = columna[14],
+                            Colonia = new ML.Colonia{ IdColonia = Convert.ToInt32(columna[15]) }
+                        },
+                        Password = columna[16]
+                    };
+                    BL.Usuarios.AddEF(usuario);
+                }
+                result.Correct = true;
+            }
+            catch(Exception ex)
+            {
+                result.Correct = false; result.Exception = ex; result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
+
+        public static ML.Result LeerExel(string connectionString)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (OleDbConnection context = new OleDbConnection(connectionString))
+                {
+                    string query = "SELECT * FROM [Sheet1$]";
+                    using(OleDbCommand cmd = new OleDbCommand(query, context))
                     {
-                        ML.Usuario usuario = new ML.Usuario
+                        OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
+                        DataTable dataTable = new DataTable();
+                        adapter.Fill(dataTable);
+                        if (dataTable.Rows.Count != 0)
                         {
-                            IdUsuario = int.Parse(columna[0]),
-                            Nombre = columna[1],
-                            ApellidoPaterno = columna[2],
-                            ApellidoMaterno = columna[3],
-                            Email = columna[4],
-                            FechaNacimiento = columna[5],
-                            Sexo = columna[6],
-                            Telefono = columna[7],
-                            Celular = columna[8],
-                            Estatus = bool.Parse(columna[9]),
-                            CURP = columna[10],
-                            UserName = columna[11],
-                            Rol = new ML.Rol{ Nombre = columna[12] },
-                            Direccion = new ML.Direccion
+                            result.Objects = new List<object>();
+                            foreach (DataRow row in dataTable.Rows)
                             {
-                                Calle = columna[13],
-                                NumeroInterior = columna[14],
-                                NumeroExterior = columna[15],
-                                Colonia = new ML.Colonia
+                                ML.Usuario usuario = new ML.Usuario
                                 {
-                                    Nombre = columna[16],
-                                    CodigoPostal = columna[19],
-                                    Municipio = new ML.Municipio { Nombre = columna[18] }
-                                }
+                                    Nombre = row[0].ToString(),
+                                    ApellidoPaterno = row[1].ToString(),
+                                    ApellidoMaterno = row[2].ToString(),
+                                    Email = row[3].ToString(),
+                                    Password = row[16].ToString(),
+                                    FechaNacimiento = row[4].ToString(),
+                                    Sexo = row[5].ToString(),
+                                    Telefono = row[6].ToString(),
+                                    Celular = row[7].ToString(),
+                                    Estatus = (row[8].ToString() == "" || row[8].ToString() == null) ? false : Convert.ToBoolean(Convert.ToInt32(row[8].ToString())),
+                                    CURP = row[9].ToString(),
+                                    UserName = row[10].ToString(),
+                                    Rol = new ML.Rol { IdRol = (row[11].ToString() == "" || row[11].ToString() == null) ? 0 : Convert.ToInt32(row[11].ToString()) },
+                                    Direccion = new ML.Direccion
+                                    {
+                                        Calle = row[12].ToString(),
+                                        NumeroInterior = row[13].ToString(),
+                                        NumeroExterior = row[14].ToString(),
+                                        Colonia = new ML.Colonia { IdColonia = (row[15].ToString() == "" || row[15].ToString() == null) ? 0 : Convert.ToInt32(row[15].ToString()) }
+                                    }
+                                };
+                                result.Objects.Add(usuario);
                             }
-                        };
+                            result.Correct = true;
+                        }
+                        else
+                        {
+                            result.Correct = false; result.ErrorMessage = "No hay Datos/Registros";
+                        }
                     }
-                    //Console.WriteLine(linea);
                 }
             }catch(Exception ex)
             {
-                result.Correct = false; result.Exception = ex; result.ErrorMessage = ex.Message;
+                result.Correct = false; result.ErrorMessage = ex.Message; result.Exception = ex;
+            }
+            return result;
+        }
+
+        public static ML.Result ValidarExel(List<object> usuarios)
+        {
+            ML.Result result = new ML.Result();
+            result.Objects = new List<object>();
+            int contador = 1;
+            foreach (ML.Usuario usuario in usuarios) {
+                ML.ResultExel resultExel = new ML.ResultExel();
+                resultExel.NumeroRegistro = contador;
+                resultExel.ErrorMessage += ((usuario.UserName.Length > 50 || usuario.UserName == "" || usuario.UserName == null) ? "El nombre de usuario no puede ser vacio o mayor a 50 caracteres,": "");
+                resultExel.ErrorMessage += ((usuario.Nombre.Length > 50 || usuario.Nombre == "" || usuario.Nombre == null) ? " El nombre no puede ser vacio o mayor a 50 caracteres,": "");
+                resultExel.ErrorMessage += ((usuario.ApellidoPaterno.Length > 50 || usuario.ApellidoPaterno == "" || usuario.ApellidoPaterno == null) ? " El apellido paterno no puede ser vacio o mayor a 50 caracteres,": "");
+                resultExel.ErrorMessage += ((usuario.ApellidoMaterno.Length > 50 || usuario.ApellidoMaterno == "" || usuario.ApellidoMaterno == null) ? " El apellido materno no puede ser vacio o mayor a 50 caracteres,": "");
+                resultExel.ErrorMessage += ((usuario.Email.Length > 50 || usuario.Email == "" || usuario.Email == null) ? " El email no puede ser vacio o mayor a 50 caracteres," : "");
+                resultExel.ErrorMessage += ((usuario.Password.Length > 50 || usuario.Password == "" || usuario.Password == null) ? " El password no puede ser vacio o mayor a 50 caracteres," : "");
+                resultExel.ErrorMessage += ((usuario.FechaNacimiento == "" || usuario.FechaNacimiento == null) ? " La Fecha no puede ser vacia," : "");
+                resultExel.ErrorMessage += ((usuario.Sexo == "" || usuario.Sexo == null) ? " El sexo no puede ser vacio" : "");
+                resultExel.ErrorMessage += ((usuario.Telefono.Length > 20 || usuario.Telefono == "" || usuario.Telefono == null) ? " El telefono no puede ser vacio o mayor a 20 caracteres," : "");
+                resultExel.ErrorMessage += ((usuario.Celular.Length > 20 || usuario.Celular == "" || usuario.Celular == null) ? " El celular no puede ser vacio o mayor a 20 caracteres," : "");
+                resultExel.ErrorMessage += ((usuario.Estatus == null) ? " El estatus no puede ser vacio" : "");
+                resultExel.ErrorMessage += ((usuario.CURP.Length > 20 || usuario.CURP == "" || usuario.CURP == null) ? " El CURP no puede ser vacio o mayor a 20 caracteres," : "");
+                resultExel.ErrorMessage += ((usuario.Rol.IdRol == 0 || usuario.Rol.IdRol == null) ? " El id de la colonia no puede ser vacia o 0," : "");
+                resultExel.ErrorMessage += ((usuario.Direccion.Calle.Length > 50 || usuario.Direccion.Calle == "" || usuario.Direccion.Calle == null) ? " La calle no puede ser vacia o mayor a 50 caracteres," : "");
+                resultExel.ErrorMessage += ((usuario.Direccion.NumeroInterior.Length > 20 || usuario.Direccion.NumeroInterior == "" || usuario.Direccion.NumeroInterior == null) ? " El numero interior no puede ser vacio o mayor a 20 caracteres," : "");
+                resultExel.ErrorMessage += ((usuario.Direccion.NumeroExterior.Length > 20 || usuario.Direccion.NumeroExterior == "" || usuario.Direccion.NumeroExterior == null) ? " El numero exterior no puede ser vacio o mayor a 20 caracteres," : "");
+                resultExel.ErrorMessage += ((usuario.Direccion.Colonia.IdColonia == 0 || usuario.Direccion.Colonia.IdColonia == null) ? " El id de la colonia no puede ser vacia o 0," : "");
+                if(resultExel.ErrorMessage != "")
+                {
+                    result.Objects.Add(resultExel);
+                }
+                contador++;
             }
             return result;
         }

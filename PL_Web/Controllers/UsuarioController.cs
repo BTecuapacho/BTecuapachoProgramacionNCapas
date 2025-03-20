@@ -1,10 +1,16 @@
-﻿using ML;
+﻿using Microsoft.AspNet.Identity;
+using ML;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.OleDb;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
+using System.Xml.Linq;
 
 namespace PL_Web.Controllers
 {
@@ -88,28 +94,47 @@ namespace PL_Web.Controllers
         [HttpPost]
         public ActionResult Form(ML.Usuario usuario)
         {
-            HttpPostedFileBase file = Request.Files["ImagenUpload"];
-            if(file != null && file.ContentLength != 0)
+            if (ModelState.IsValid)
             {
-                usuario.Imagen = ConvertirAArrayBytes(file);
-            }
-            if (usuario.IdUsuario == 0)
-            {
-                ML.Result result = BL.Usuarios.AddEF(usuario);
-                if (result.Correct) {
-                    return RedirectToAction("GetAll");
-                } else {
-                    return RedirectToAction("Form");
+                HttpPostedFileBase file = Request.Files["ImagenUpload"];
+                if (file != null && file.ContentLength != 0)
+                {
+                    usuario.Imagen = ConvertirAArrayBytes(file);
+                }
+                if (usuario.IdUsuario == 0)
+                {
+                    ML.Result result = BL.Usuarios.AddEF(usuario);
+                    ViewBag.succesMessage = "El usuario se inserto de manera correcta";
+                    ViewBag.result = result;
+                    return PartialView("_MessageNotification");
+                }
+                else
+                {
+                    ML.Result result = BL.Usuarios.UpdateEF(usuario);
+                    ViewBag.succesMessage = "El usuario se actualizo de manera correcta";
+                    ViewBag.result = result;
+                    return PartialView("_MessageNotification");
                 }
             }
             else
             {
-                ML.Result result = BL.Usuarios.UpdateEF(usuario);
-                if (result.Correct) {
-                    return RedirectToAction("GetAll");
-                } else {
-                    return RedirectToAction("Form");
+                usuario.Direccion.Colonia.Colonias = new List<object>();
+                usuario.Direccion.Colonia.Municipio.Municipios = new List<object>();
+                ML.Result resultRoles = BL.Rol.GetAllEF();
+                usuario.Rol.Roles = resultRoles.Objects;
+                ML.Result resultEstado = BL.Estado.GetAllEF();
+                usuario.Direccion.Colonia.Municipio.Estado.Estados = resultEstado.Objects;
+                if(usuario.Direccion.Colonia.Municipio.Estado.IdEstado != 0)
+                {
+                    ML.Result resultMunicipio = BL.Municipio.GetByIdEstado(usuario.Direccion.Colonia.Municipio.Estado.IdEstado);
+                    usuario.Direccion.Colonia.Municipio.Municipios = resultMunicipio.Objects;
                 }
+                if(usuario.Direccion.Colonia.Municipio.IdMunicipio != 0)
+                {
+                    ML.Result resultColonia = BL.Colonia.GetByIdMunicipio(usuario.Direccion.Colonia.Municipio.IdMunicipio);
+                    usuario.Direccion.Colonia.Colonias = resultColonia.Objects;
+                }
+                return View(usuario);
             }
         }
 
@@ -124,14 +149,9 @@ namespace PL_Web.Controllers
         public ActionResult Delete(int IdUsuario)
         {
             ML.Result result = BL.Usuarios.DeleteEF(IdUsuario);
-            if (result.Correct)
-            {
-                return RedirectToAction("GetAll");
-            }
-            else
-            {
-                return RedirectToAction("GetAll");
-            }
+            ViewBag.succesMessage = "El usuario se elimino de manera correcta";
+            ViewBag.result = result;
+            return PartialView("_MessageNotification");
         }
 
         [HttpPost]
@@ -151,6 +171,112 @@ namespace PL_Web.Controllers
         public JsonResult GetColoniasByIdMunicipio(int IdMunicipio)
         {
             ML.Result JsonResult = BL.Colonia.GetByIdMunicipio(IdMunicipio);
+            return Json(JsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult CargaMasivaExel()
+        {
+            string extencionPermitida = ".xlsx";
+            HttpPostedFileBase exel = Request.Files["ExelXLSX"];
+            if (Session["RutaExcel"] == null)
+            {
+                if (exel.ContentLength != 0)
+                {
+                    string extencionObtenida = Path.GetExtension(exel.FileName);
+                    if (extencionObtenida == extencionPermitida)
+                    {
+                        string ruta = Server.MapPath("~/CargaMasiva/") + Path.GetFileNameWithoutExtension(exel.FileName) + "-" + DateTime.Now.ToString("ddMMyyyyHmmssfff") + ".xslx";
+                        if (!System.IO.File.Exists(ruta))
+                        {
+                            exel.SaveAs(ruta);
+                            string cadenaConecion = ConfigurationManager.ConnectionStrings["OleDbConnection"] + ruta;
+                            ML.Result resultLeerExel = BL.Usuarios.LeerExel(cadenaConecion);
+                            if (resultLeerExel.Objects.Count > 0)
+                            {
+                                ML.Result resultValidacionExel = BL.Usuarios.ValidarExel(resultLeerExel.Objects);
+                                if (resultValidacionExel.Objects.Count > 0)
+                                {
+                                    ViewBag.ErroresExel = resultValidacionExel.Objects;
+                                    return PartialView("_ModalExcel");
+                                }
+                                else
+                                {
+                                    Session["RutaExcel"] = ruta;
+                                }
+                            }
+                            else
+                            {
+                                ViewBag.ErroresExel = "Ocurrio un error inesperado al leer el excel vuelva a subir el excel";
+                                return PartialView("_ModalExcel");
+                            }
+                        }
+                        else {
+                            ViewBag.ErroresExel = "Ocurrio un error inesperado vuelva a subir el excel";
+                            return PartialView("_ModalExcel");
+                        }
+                    }
+                    else
+                    {
+                        ViewBag.ErroresExel = "El exel teine que tener la extencion .xlsx (Suba un archivo de exel)";
+                        return PartialView("_ModalExcel");
+                    }
+                }
+                else
+                {
+                    ViewBag.ErroresExel = "No se recivio ningun archivo";
+                    return PartialView("_ModalExcel");
+                }
+            }
+            else
+            {
+                string cadenaConecion = ConfigurationManager.ConnectionStrings["OleDbConnection"] + Session["RutaExcel"].ToString();
+                ML.Result resultLeerExel = BL.Usuarios.LeerExel(cadenaConecion);
+                if (resultLeerExel.Objects.Count > 0)
+                {
+                    ML.Result resultInsertExcel = InsertDatosExel(resultLeerExel.Objects);
+                    ViewBag.ErroresExel = resultInsertExcel.Objects;
+                    Session["RutaExcel"] = null;
+                    return PartialView("_ModalExcel");
+                }
+                else
+                {
+                    ViewBag.ErroresExel = "Ocurrio un error inesperado al leer el excel";
+                    return PartialView("_ModalExcel");
+                }
+            }
+            return RedirectToAction("GetAll");
+        }
+
+        public static ML.Result InsertDatosExel(List<object> usuarios)
+        {
+            ML.Result result = new Result();
+            result.Objects = new List<object>();
+            int contador = 1;
+            foreach (ML.Usuario usuario in usuarios)
+            {
+                ML.ResultExel resultInsertExcel = new ResultExel();
+                ML.Result resultAdd = BL.Usuarios.AddEF(usuario);
+                resultInsertExcel.NumeroRegistro = contador;
+                if (resultAdd.Correct)
+                {
+                    resultInsertExcel.ErrorMessage = "El usuario de inserto de manera correcta";
+                }
+                else
+                {
+                    resultInsertExcel.ErrorMessage = resultAdd.ErrorMessage;
+                }
+                result.Objects.Add(resultInsertExcel);
+                contador++;
+            }
+            return result;
+        }
+
+        [HttpGet]
+        public JsonResult GetAllExcel()
+        {
+            string cadenaConecion = ConfigurationManager.ConnectionStrings["OleDbConnection"] + Session["RutaExcel"].ToString();
+            ML.Result JsonResult = BL.Usuarios.LeerExel(cadenaConecion);
             return Json(JsonResult, JsonRequestBehavior.AllowGet);
         }
     }
