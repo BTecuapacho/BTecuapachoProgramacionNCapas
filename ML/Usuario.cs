@@ -13,7 +13,7 @@ namespace ML
         public int IdUsuario { get; set; }
         [DisplayName("Nombre de usuaio")]
         [Required(ErrorMessage = "Nombre de usuario Obligatorio")]
-        [RegularExpression(@"^[a-zA-Z0-9](_(?!(\.|_))|\.(?!(_|\.))|[a-zA-Z0-9]){6,18}[a-zA-Z0-9]$", ErrorMessage = " Nombre de usuario solo se acepta letras")]
+        [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = " Nombre de usuario solo se acepta letras")]
         public string UserName { set; get; }
         [DisplayName("Nombre")]
         [Required(ErrorMessage = "El nombre es obligatorio")]
@@ -54,6 +54,7 @@ namespace ML
         [RegularExpression(@"^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$", ErrorMessage = "Ingrese un formato de CURP valido")]
         public string CURP { set; get; }
         public byte[] Imagen { set; get; }
+        public string ImagenBase64 { set; get; }
         public ML.Rol Rol { get; set; } 
         public ML.Direccion Direccion { set; get; }
         public List<object> Usuarios { get; set; }

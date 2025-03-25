@@ -1,0 +1,234 @@
+﻿@{
+    ViewBag.Title = "GetAll";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+<div class="container">
+    <h2>Usuarios</h2>
+    <div class="row mt-2 mb-3">
+        <div class="col-6 text-start">
+            <button class="btn btn-primary" onclick="OpenModal()">
+                <i class="bi bi-person-plus-fill"></i>
+                <strong>Nuevo Usuario</strong>
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="border-bottom title-part-padding">
+                    <h4 class="card-title my-2 text-center">Lista de usuarios</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" scope="col">#</th>
+                                    <th class="text-center" scope="col">Nombre</th>
+                                    <th class="text-center" scope="col">Contacto</th>
+                                    <th class="text-center" scope="col">Fecha de Nacimiento</th>
+                                    <th class="text-center" scope="col">Sexo</th>
+                                    <th class="text-center" scope="col">Direccino</th>
+                                    <th class="text-center" scope="col">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyUsuarios">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="ModalFrom" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Nuevo Usuario</h1>
+                <button type="button" class="btn-close btnClose" onclick="CloseModal()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <img src="/content/imagenes/usuarioMasculino.png" style="width:8%" alt="Imagen Usuario" id="imagenUsuario">
+                    <div class="col mt-2">
+                        <label for="form-label">Foto de perfil</label>
+                        <input onchange="IsImage()" id="inptImagen" name="ImagenUpload" class="form-control mx-auto" type="file">
+                    </div>
+                </div>
+                <input id="IdUsuario" name="IdUsuario" type="hidden" value="0">
+                <input id="IdDireccion" name="IdDireccion" type="hidden" value="0">
+                <input id="Imagen" name="Imagen" type="hidden" value="">
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <label class="form-label">Nombre</label>
+                        <input class="form-control" id="Nombre" name="Nombre" onkeypress="SoloLetras(event)" placeholder="" type="text" value="">
+                        <div class="error"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label" for="ApellidoPaterno">Apellido Paterno</label>
+                        <input class="form-control" id="ApellidoPaterno" name="ApellidoPaterno" onkeypress="SoloLetras(event)" placeholder="" type="text" value="">
+                        <div class="error"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Apellido Paterno</label>
+                        <input class="form-control" id="ApellidoMaterno" name="ApellidoMaterno" onkeypress="SoloLetras(event)" placeholder="" type="text" value="">
+                        <div class="error"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Correo</label>
+                        <input class="form-control" id="Email" name="Email" onblur="SoloEmail()" placeholder="" type="text" value="">
+                        <div class="error"></div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <label class="form-label">Contraseña</label>
+                        <input type="password" id="password" class="form-control" placeholder="*********" onblur="ValidatePassword()">
+                        <div class="error"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Confirmar Contraseña</label>
+                        <input class="form-control" id="confirmPassword" name="Password" onblur="ValidatePasswordConfirm()" placeholder="*********" type="password">
+                        <div class="error"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Num. Telefono</label>
+                        <input class="form-control" id="inptTelefono" name="Telefono" onblur="ValidateTelefono('inptTelefono')" placeholder="" type="text" value="">
+                        <div class="error"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Num. Celular</label>
+                        <input class="form-control" id="inptCelular" name="Celular" onblur="ValidateTelefono('inptCelular')" placeholder="" type="text" value="">
+                        <span class="field-validation-valid text-danger" data-valmsg-for="Celular" data-valmsg-replace="true"></span>
+                        <div class="error"></div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <label class="form-label">Fecha de nacimiento</label>
+                        <input class="form-control" id="datepicker" name="FechaNacimiento" onchange="ValidateFecha()" type="text" value="">
+                        <div class="error"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">CURP</label>
+                        <input class="form-control" id="inptCRUP" name="CURP" onblur="ValidateCURP()" placeholder="" type="text" value="">
+                        <div class="error"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Roles</label>
+                        <select class="form-select" id="ddlRol" name="IdRol" onchange="ValidateSelect('ddlRol')">
+                            <option value="">Seleccione un rol</option>
+                        </select>
+                        <div class="error"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Nombre de usuaio</label>
+                        <input class="form-control" id="inptUserName" name="UserName" onblur="ValidateUserName()" placeholder="" type="text" value="">
+                        <div class="error"></div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="form-check form-check-inline mt-1">
+                            <input class="form-check-input" id="Sexo" name="Sexo" onchange="CambiarImgSexo()" type="radio" value="HO">
+                            <label class="form-check-label" for="inlineRadio1">Hombre</label>
+                        </div>
+                        <div class="form-check form-check-inline mt-1">
+                            <input class="form-check-input" id="Sexo" name="Sexo" onchange="CambiarImgSexo()" type="radio" value="MU">
+                            <label class="form-check-label" for="inlineRadio1">Mujer</label>
+                        </div>
+                        <div class="error"></div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-check form-switch mt-1">
+                            <input class="form-check-input" id="Estatus" name="Estatus" role="switch" type="checkbox" value="true"><input name="Estatus" type="hidden" value="false">
+                            <label class="form-check-label" for="flexSwitchCheckDefault">Estatus</label>
+                        </div>
+                    </div>
+                </div>
+                <hr class="mb-4">
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <label class="form-label">Estados</label>
+                        <select class="form-select" id="ddlEstado" name="IdEstado" onchange="GetMunicipioByIdEstado(), ValidateSelect('ddlEstado')">
+                            <option value="">Seleccione un estado</option>
+                        </select>
+                        <div class="error"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Municipios</label>
+                        <select class="form-select " id="ddlMunicipio" name="IdMunicipio" onchange="GetColoniasByIdMunicipio(), ValidateSelect('ddlMunicipio')">
+                            <option value="">Seleccione un Municipio</option>
+                        </select>
+                        <div class="error"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Colonias</label>
+                        <select class="form-select" id="ddlColonia" name="IdColonia" onchange="ValidateSelect('ddlColonia')">
+                            <option value="">Seleccione una colonia</option>
+                        </select>
+                        <div class="error"></div>
+                    </div>
+                    <div class="col-md-3 mt-1">
+                        <label class="form-label">Nombre de la calle</label>
+                        <input class="form-control w-100" id="inptCalle" name="Calle" onblur="ValidateAlphanumericoEspacios()" placeholder="" type="text" value="">
+                        <div class="error"></div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-md-3 mt-1">
+                        <label class="form-label">Num. Interior</label>
+                        <input class="form-control" id="NumeroInterior" name="NumeroInterior" onkeypress="SoloNumeros(event)" placeholder="" type="text" value="">
+                        <div class="error"></div>
+                    </div>
+                    <div class="col-md-3 mt-1">
+                        <label class="form-label">Num. Exterior</label>
+                        <input class="form-control" id="NumeroExterior" name="NumeroExterior" onkeypress="SoloNumeros(event)" placeholder="" type="text" value="">
+                        <div class="error"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btnClose" onclick="CloseModal()">
+                    Cancelar
+                    <i class="bi bi-x-square-fill"></i>
+                </button>
+                <button class="btn btn-primary" onclick="Enviar()">
+                    <i class="bi bi-floppy2-fill"></i>
+                    Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="loader"></div>
+<div id="confirmAlert"></div>
+
+@Scripts.Render("~/bundles/jquery")
+<script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/toastr@2.1.4/toastr.min.js "></script>
+<link href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.css " rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.17.2/dist/sweetalert2.all.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.17.2/dist/sweetalert2.min.css" rel="stylesheet">
+<link href="~/Content/loader.css" rel="stylesheet" />
+<script src="~/Scripts/loader.js"></script>
+<script src="~/Scripts/ConfirmAlert.js"></script>
+<script src="~/Scripts/Espesifics/notificationToast.js"></script>
+<script src="~/Scripts/Espesifics/SweetAlertManager.js"></script>
+<script>
+    var urlAdd = '@Url.Action("Add", "CRUDJs")'
+    var urlUpdate = '@Url.Action("Update", "CRUDJs")'
+    var urlGetAll = '@Url.Action("GetAllJsonResult", "CRUDJs")'
+    var urlGetById = '@Url.Action("GetById", "CRUDJs")?IdUsuario='
+    var urlGetAllRoles = '@Url.Action("GetAllRoles", "CRUDJs")'
+    var urlGetAllEstados = '@Url.Action("GetAllEstados", "CRUDJs")'
+    var urlCambiarEstatus = '@Url.Action("CambiarEstatus", "Usuario")'
+    var urlEliminarUsuario = '@Url.Action("Delete", "CRUDJs")'
+    var urlGetMunicipiosByIdEstado = '@Url.Action("GetMunicipiosByIdEstado", "Usuario")?IdEstado='
+    var urlGetColoniasByIdMunicipio = '@Url.Action("GetColoniasByIdMunicipio", "Usuario")?IdMunicipio='
+</script>
+<script src="~/Scripts/Espesifics/CRUDJs/CRUDJs.js"></script>

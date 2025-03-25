@@ -807,6 +807,64 @@ namespace BL
             return result;
         }
 
+        public static ML.Result GetAllEFJs(ML.Usuario usuarioIn)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (DL_EF.BTecuapachoProgramacionNCapasEntities context = new DL_EF.BTecuapachoProgramacionNCapasEntities())
+                {
+                    var usuarios = context.UsuarioGetAllWithView(usuarioIn.Nombre, usuarioIn.ApellidoPaterno, usuarioIn.ApellidoMaterno, usuarioIn.Rol.IdRol).ToList();
+                    if (usuarios.Count() != 0)
+                    {
+                        result.Objects = new List<object>();
+                        foreach (var usuarioGet in usuarios)
+                        {
+                            ML.Usuario usuario = new ML.Usuario();
+                            usuario.Rol = new ML.Rol();
+                            usuario.Direccion = new ML.Direccion();
+                            usuario.Direccion.Colonia = new ML.Colonia();
+                            usuario.Direccion.Colonia.Municipio = new ML.Municipio();
+                            usuario.Direccion.Colonia.Municipio.Estado = new ML.Estado();
+                            usuario.IdUsuario = Convert.ToInt32(usuarioGet.IdUsuario);
+                            usuario.Nombre = usuarioGet.NombreUsuario;
+                            usuario.ApellidoPaterno = usuarioGet.ApellidoPaterno;
+                            usuario.ApellidoMaterno = usuarioGet.ApellidoMaterno;
+                            usuario.Email = usuarioGet.Email;
+                            usuario.FechaNacimiento = Convert.ToString(usuarioGet.FechaNacimiento);
+                            usuario.Sexo = usuarioGet.Sexo;
+                            usuario.Telefono = usuarioGet.Telefono;
+                            usuario.Celular = usuarioGet.Celular;
+                            usuario.Estatus = Convert.ToBoolean(usuarioGet.Estatus);
+                            usuario.CURP = usuarioGet.CURP;
+                            usuario.UserName = usuarioGet.UserName;
+                            usuario.ImagenBase64 = usuarioGet.Imagen != null ? Convert.ToBase64String(usuarioGet.Imagen) : "";
+                            usuario.Rol.Nombre = usuarioGet.NombreRol != null ? usuarioGet.NombreRol : "Sin rol asignado";
+                            usuario.Direccion.Calle = usuarioGet.calle;
+                            usuario.Direccion.NumeroInterior = usuarioGet.NumeroInterior;
+                            usuario.Direccion.NumeroExterior = usuarioGet.NumeroExterior;
+                            usuario.Direccion.Colonia.Nombre = usuarioGet.NombreColonia;
+                            usuario.Direccion.Colonia.CodigoPostal = usuarioGet.CodigoPostal;
+                            usuario.Direccion.Colonia.Municipio.Nombre = usuarioGet.NombreMunicipio;
+                            usuario.Direccion.Colonia.Municipio.Estado.Nombre = usuarioGet.NombreEstado;
+
+                            result.Objects.Add(usuario);
+                        }
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false; result.ErrorMessage = "No hay Datos/Registros.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false; result.Exception = ex; result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
+
         public static ML.Result GetByIDEF(int idUsuario)
         {
             ML.Result result = new ML.Result();

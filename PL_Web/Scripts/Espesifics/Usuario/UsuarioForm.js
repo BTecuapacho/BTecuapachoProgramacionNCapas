@@ -56,7 +56,7 @@ function ValidatePassword() {
     var password = $('#password').val();
     var passwordField = $('#password')[0]
     var passwordError = passwordField.parentNode.querySelector('.error')
-    var passwordRegExp = new RegExp('/^(?=.*\\d)(?=.*[\\u0021-\\u002b\\u003c-\\u0040])(?=.*[A-Z])(?=.*[a-z])\\S{8,16}$/')
+    var passwordRegExp = new RegExp(/^(?=.*\d)(?=.*[\u0021-\u002b\u003c-\u0040])(?=.*[A-Z])(?=.*[a-z])\S{8,16}$/)
     passwordError.textContent = ''
     passwordError.classList.remove('valid-feedback', 'invalid-feedback')
     if (passwordRegExp.test(password)) {
@@ -172,7 +172,7 @@ function ValidateSelect(IdElemento) {
 }
 
 function ValidateUserName() {
-    var RegExpUserName = new RegExp(/^[a-zA-Z0-9](_(?!(\.|_))|\.(?!(_|\.))|[a-zA-Z0-9]){6,18}[a-zA-Z0-9]$/)
+    var RegExpUserName = new RegExp(/^[a-zA-Z\s]+$/)
     var inputField = $('#inptUserName')[0]
     var errorMessage = inputField.parentNode.querySelector('.error')
     errorMessage.textContent = ''

@@ -169,6 +169,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\CRUDJsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\UsuarioController.cs" />
@@ -198,6 +199,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\loader.css" />
     <Content Include="Content\myFonts.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -209,6 +211,10 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
+    <Content Include="Scripts\ConfirmAlert.js" />
+    <Content Include="Scripts\Espesifics\CRUDJs\CRUDJs.js" />
+    <Content Include="Scripts\Espesifics\notificationToast.js" />
+    <Content Include="Scripts\Espesifics\SweetAlertManager.js" />
     <Content Include="Scripts\Espesifics\Usuario\UsuarioForm.js" />
     <Content Include="Scripts\Espesifics\Usuario\UsuarioGetAll.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
@@ -220,6 +226,7 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\loader.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -260,6 +267,7 @@
     <Content Include="Views\Usuario\Form.cshtml" />
     <Content Include="Views\Usuario\_ModalExcel.cshtml" />
     <Content Include="Views\Usuario\_MessageNotification.cshtml" />
+    <Content Include="Views\CRUDJs\GetAll.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
