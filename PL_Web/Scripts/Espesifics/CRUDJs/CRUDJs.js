@@ -435,7 +435,7 @@ function GetById(input) {
         },
         error: function (xhr) {
             console.log(xhr)
-            alert(`Error al eliminar el usuario. Código : ${xhr.status}`)
+            alert(`Error al obtener el usuario. Código : ${xhr.status}`)
         }
     });
 }
