@@ -28,10 +28,13 @@ namespace PL_Web.Controllers
             usuario.Nombre = "";
             usuario.ApellidoPaterno = "";
             usuario.ApellidoMaterno = "";
-            ML.Result result = BL.Usuarios.GetAllEF(usuario);
-            if (result.Correct)
+            //ML.Result result = BL.Usuarios.GetAllEF(usuario);
+            //usuario.Usuarios = result.Objects; //solo si es correct sin manda una lista vacia
+            UsuarioReference.UsuarioClient objectUsuario = new UsuarioReference.UsuarioClient();
+            var resultUsuario = objectUsuario.GetAll(usuario);
+            if (resultUsuario.Correct)
             {
-                usuario.Usuarios = result.Objects;
+                usuario.Usuarios = resultUsuario.Objects.ToList();
             }
             else
             {
@@ -49,10 +52,13 @@ namespace PL_Web.Controllers
             usuario.ApellidoPaterno = usuario.ApellidoPaterno != null ? usuario.ApellidoPaterno : "";
             usuario.ApellidoMaterno = usuario.ApellidoMaterno != null ? usuario.ApellidoMaterno : "";
             usuario.Rol.IdRol = usuario.Rol.IdRol == 0 ? 0 : usuario.Rol.IdRol;
-            ML.Result result = BL.Usuarios.GetAllEF(usuario);
-            if (result.Correct)
+            //ML.Result result = BL.Usuarios.GetAllEF(usuario);
+            //usuario.Usuarios = result.Objects; //solo si es correct sin manda una lista vacia
+            UsuarioReference.UsuarioClient objectUsuario = new UsuarioReference.UsuarioClient();
+            var resultUsuario = objectUsuario.GetAll(usuario);
+            if (resultUsuario.Correct)
             {
-                usuario.Usuarios = result.Objects;
+                usuario.Usuarios = resultUsuario.Objects.ToList();
             }
             else
             {

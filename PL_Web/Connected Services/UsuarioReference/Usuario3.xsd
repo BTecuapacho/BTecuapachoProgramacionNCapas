@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/ML" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/ML" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:50944/Usuario.svc?xsd=xsd2" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:complexType name="Usuario">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ApellidoMaterno" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ApellidoPaterno" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CURP" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Celular" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Direccion" nillable="true" type="tns:Direccion" />
+      <xs:element minOccurs="0" name="Email" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Estatus" type="xs:boolean" />
+      <xs:element minOccurs="0" name="FechaNacimiento" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IdUsuario" type="xs:int" />
+      <xs:element minOccurs="0" name="Imagen" nillable="true" type="xs:base64Binary" />
+      <xs:element minOccurs="0" name="Nombre" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Password" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Rol" nillable="true" type="tns:Rol" />
+      <xs:element minOccurs="0" name="Sexo" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Telefono" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="UserName" nillable="true" type="xs:string" />
+      <xs:element xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Usuarios" nillable="true" type="q1:ArrayOfanyType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Usuario" nillable="true" type="tns:Usuario" />
+  <xs:complexType name="Direccion">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Calle" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Colonia" nillable="true" type="tns:Colonia" />
+      <xs:element xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Direcciones" nillable="true" type="q2:ArrayOfanyType" />
+      <xs:element minOccurs="0" name="IdDireccion" type="xs:int" />
+      <xs:element minOccurs="0" name="NumeroExterior" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NumeroInterior" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Direccion" nillable="true" type="tns:Direccion" />
+  <xs:complexType name="Colonia">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CodigoPostal" nillable="true" type="xs:string" />
+      <xs:element xmlns:q3="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Colonias" nillable="true" type="q3:ArrayOfanyType" />
+      <xs:element minOccurs="0" name="IdColonia" type="xs:int" />
+      <xs:element minOccurs="0" name="Municipio" nillable="true" type="tns:Municipio" />
+      <xs:element minOccurs="0" name="Nombre" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Colonia" nillable="true" type="tns:Colonia" />
+  <xs:complexType name="Municipio">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Estado" nillable="true" type="tns:Estado" />
+      <xs:element minOccurs="0" name="IdMunicipio" type="xs:int" />
+      <xs:element xmlns:q4="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Municipios" nillable="true" type="q4:ArrayOfanyType" />
+      <xs:element minOccurs="0" name="Nombre" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Municipio" nillable="true" type="tns:Municipio" />
+  <xs:complexType name="Estado">
+    <xs:sequence>
+      <xs:element xmlns:q5="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Estados" nillable="true" type="q5:ArrayOfanyType" />
+      <xs:element minOccurs="0" name="IdEstado" type="xs:int" />
+      <xs:element minOccurs="0" name="Nombre" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Estado" nillable="true" type="tns:Estado" />
+  <xs:complexType name="Rol">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="IdRol" type="xs:int" />
+      <xs:element minOccurs="0" name="Nombre" nillable="true" type="xs:string" />
+      <xs:element xmlns:q6="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Roles" nillable="true" type="q6:ArrayOfanyType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Rol" nillable="true" type="tns:Rol" />
+</xs:schema>

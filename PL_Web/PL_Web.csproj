@@ -171,6 +171,11 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Connected Services\UsuarioReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -185,6 +190,16 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Connected Services\UsuarioReference\PL_Web.UsuarioReference.Result.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <None Include="Connected Services\UsuarioReference\Usuario.disco" />
+    <None Include="Connected Services\UsuarioReference\configuration91.svcinfo" />
+    <None Include="Connected Services\UsuarioReference\configuration.svcinfo" />
+    <None Include="Connected Services\UsuarioReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-grid.rtl.css" />
@@ -211,6 +226,22 @@
     <Content Include="Scripts\bootstrap.esm.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <None Include="Connected Services\UsuarioReference\Usuario.wsdl" />
+    <None Include="Connected Services\UsuarioReference\Usuario.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\UsuarioReference\Usuario1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\UsuarioReference\Usuario2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\UsuarioReference\Usuario3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\UsuarioReference\Usuario4.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\Espesifics\Usuario\UsuarioForm.js" />
     <Content Include="Scripts\Espesifics\Usuario\UsuarioGetAll.js" />
@@ -304,6 +335,12 @@
       <Project>{0d9d6ef0-2bd8-4171-b463-dac7671aa8fd}</Project>
       <Name>ML</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Connected Services\UsuarioReference\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -7,12 +7,12 @@
     <ProductVersion>
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{1866454F-FC85-4E27-A7BA-FB297A46AAD4}</ProjectGuid>
+    <ProjectGuid>{1E677CA7-5A04-432A-8C69-8CA263192AF8}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SL_Soap</RootNamespace>
-    <AssemblyName>SL_Soap</AssemblyName>
+    <RootNamespace>SL_WCF</RootNamespace>
+    <AssemblyName>SL_WCF</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -72,7 +72,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Calculadora.svc" />
-    <Content Include="Service1.svc" />
     <Content Include="Usuario.svc" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -83,10 +82,6 @@
     <Compile Include="ICalculadora.cs" />
     <Compile Include="IUsuario.cs" />
     <Compile Include="Result.cs" />
-    <Compile Include="Service1.svc.cs">
-      <DependentUpon>Service1.svc</DependentUpon>
-    </Compile>
-    <Compile Include="IService1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Usuario.svc.cs">
       <DependentUpon>Usuario.svc</DependentUpon>
@@ -127,9 +122,9 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>50776</DevelopmentServerPort>
+          <DevelopmentServerPort>50944</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:50776/</IISUrl>
+          <IISUrl>http://localhost:50944/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
