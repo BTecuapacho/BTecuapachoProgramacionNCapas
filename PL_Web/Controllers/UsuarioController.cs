@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.Identity;
 using ML;
+using PL_Web.UsuarioReference;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -28,7 +29,7 @@ namespace PL_Web.Controllers
             usuario.Nombre = "";
             usuario.ApellidoPaterno = "";
             usuario.ApellidoMaterno = "";
-            //ML.Result result = BL.Usuarios.GetAllEF(usuario);
+            //ML.Result result = BL.Usuarios.GetAllEF(usuario);// se usa EF
             //usuario.Usuarios = result.Objects; //solo si es correct sin manda una lista vacia
             UsuarioReference.UsuarioClient objectUsuario = new UsuarioReference.UsuarioClient();
             var resultUsuario = objectUsuario.GetAll(usuario);
@@ -52,7 +53,7 @@ namespace PL_Web.Controllers
             usuario.ApellidoPaterno = usuario.ApellidoPaterno != null ? usuario.ApellidoPaterno : "";
             usuario.ApellidoMaterno = usuario.ApellidoMaterno != null ? usuario.ApellidoMaterno : "";
             usuario.Rol.IdRol = usuario.Rol.IdRol == 0 ? 0 : usuario.Rol.IdRol;
-            //ML.Result result = BL.Usuarios.GetAllEF(usuario);
+            //ML.Result result = BL.Usuarios.GetAllEF(usuario);// se usa EF
             //usuario.Usuarios = result.Objects; //solo si es correct sin manda una lista vacia
             UsuarioReference.UsuarioClient objectUsuario = new UsuarioReference.UsuarioClient();
             var resultUsuario = objectUsuario.GetAll(usuario);
@@ -83,8 +84,11 @@ namespace PL_Web.Controllers
             }
             else
             {
-                ML.Result result = BL.Usuarios.GetByIDEF(IdUsuario.Value);
-                usuario = (ML.Usuario)result.Object;
+                //ML.Result result = BL.Usuarios.GetByIDEF(IdUsuario.Value);// se usa EF
+                //usuario = (ML.Usuario)result.Object;// se usa EF
+                UsuarioReference.UsuarioClient objectUsuario = new UsuarioReference.UsuarioClient();
+                var resultUsuario = objectUsuario.GetById(IdUsuario.Value);
+                usuario = (ML.Usuario)resultUsuario.Object;
                 ML.Result resultColonia = BL.Colonia.GetByIdMunicipio(usuario.Direccion.Colonia.Municipio.IdMunicipio);
                 ML.Result resultMunicipio = BL.Municipio.GetByIdEstado(usuario.Direccion.Colonia.Municipio.Estado.IdEstado);
                 usuario.Direccion.Colonia.Colonias = resultColonia.Objects;
@@ -109,14 +113,18 @@ namespace PL_Web.Controllers
                 }
                 if (usuario.IdUsuario == 0)
                 {
-                    ML.Result result = BL.Usuarios.AddEF(usuario);
+                    //ML.Result result = BL.Usuarios.AddEF(usuario);// se usa EF
+                    UsuarioReference.UsuarioClient objectUsuario = new UsuarioReference.UsuarioClient();
+                    var result = objectUsuario.Add(usuario);
                     ViewBag.succesMessage = "El usuario se inserto de manera correcta";
                     ViewBag.result = result;
                     return PartialView("_MessageNotification");
                 }
                 else
                 {
-                    ML.Result result = BL.Usuarios.UpdateEF(usuario);
+                    //ML.Result result = BL.Usuarios.UpdateEF(usuario);// se usa EF
+                    UsuarioReference.UsuarioClient objectUsuario = new UsuarioReference.UsuarioClient();
+                    var result = objectUsuario.Update(usuario);
                     ViewBag.succesMessage = "El usuario se actualizo de manera correcta";
                     ViewBag.result = result;
                     return PartialView("_MessageNotification");
@@ -154,7 +162,9 @@ namespace PL_Web.Controllers
         [HttpGet]
         public ActionResult Delete(int IdUsuario)
         {
-            ML.Result result = BL.Usuarios.DeleteEF(IdUsuario);
+            //ML.Result result = BL.Usuarios.DeleteEF(IdUsuario);// se usa EF
+            UsuarioReference.UsuarioClient objectUsuario = new UsuarioReference.UsuarioClient();
+            var result = objectUsuario.Delete(IdUsuario);
             ViewBag.succesMessage = "El usuario se elimino de manera correcta";
             ViewBag.result = result;
             return PartialView("_MessageNotification");
@@ -256,7 +266,7 @@ namespace PL_Web.Controllers
 
         public static ML.Result InsertDatosExel(List<object> usuarios)
         {
-            ML.Result result = new Result();
+            ML.Result result = new ML.Result();
             result.Objects = new List<object>();
             int contador = 1;
             foreach (ML.Usuario usuario in usuarios)
