@@ -56,7 +56,7 @@ function ValidatePassword() {
     var password = $('#password').val();
     var passwordField = $('#password')[0]
     var passwordError = passwordField.parentNode.querySelector('.error')
-    var passwordRegExp = new RegExp('/^(?=.*\\d)(?=.*[\\u0021-\\u002b\\u003c-\\u0040])(?=.*[A-Z])(?=.*[a-z])\\S{8,16}$/')
+    var passwordRegExp = new RegExp(/^(?=.*\d)(?=.*[\u0021-\u002b\u003c-\u0040])(?=.*[A-Z])(?=.*[a-z])\S{8,16}$/)
     passwordError.textContent = ''
     passwordError.classList.remove('valid-feedback', 'invalid-feedback')
     if (passwordRegExp.test(password)) {

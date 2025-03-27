@@ -32,10 +32,10 @@ namespace PL_Web.Controllers
             //ML.Result result = BL.Usuarios.GetAllEF(usuario);// se usa EF
             //usuario.Usuarios = result.Objects; //solo si es correct sin manda una lista vacia
             UsuarioReference.UsuarioClient objectUsuario = new UsuarioReference.UsuarioClient();
-            var resultUsuario = objectUsuario.GetAll(usuario);
-            if (resultUsuario.Correct)
+            var result = objectUsuario.GetAll(usuario);
+            if (result.Correct)
             {
-                usuario.Usuarios = resultUsuario.Objects.ToList();
+                usuario.Usuarios = result.Objects.ToList();
             }
             else
             {
@@ -56,10 +56,10 @@ namespace PL_Web.Controllers
             //ML.Result result = BL.Usuarios.GetAllEF(usuario);// se usa EF
             //usuario.Usuarios = result.Objects; //solo si es correct sin manda una lista vacia
             UsuarioReference.UsuarioClient objectUsuario = new UsuarioReference.UsuarioClient();
-            var resultUsuario = objectUsuario.GetAll(usuario);
-            if (resultUsuario.Correct)
+            var result = objectUsuario.GetAll(usuario);
+            if (result.Correct)
             {
-                usuario.Usuarios = resultUsuario.Objects.ToList();
+                usuario.Usuarios = result.Objects.ToList();
             }
             else
             {
@@ -87,8 +87,8 @@ namespace PL_Web.Controllers
                 //ML.Result result = BL.Usuarios.GetByIDEF(IdUsuario.Value);// se usa EF
                 //usuario = (ML.Usuario)result.Object;// se usa EF
                 UsuarioReference.UsuarioClient objectUsuario = new UsuarioReference.UsuarioClient();
-                var resultUsuario = objectUsuario.GetById(IdUsuario.Value);
-                usuario = (ML.Usuario)resultUsuario.Object;
+                var result = objectUsuario.GetById(IdUsuario.Value);
+                usuario = (ML.Usuario)result.Object;
                 ML.Result resultColonia = BL.Colonia.GetByIdMunicipio(usuario.Direccion.Colonia.Municipio.IdMunicipio);
                 ML.Result resultMunicipio = BL.Municipio.GetByIdEstado(usuario.Direccion.Colonia.Municipio.Estado.IdEstado);
                 usuario.Direccion.Colonia.Colonias = resultColonia.Objects;
