@@ -22,6 +22,7 @@ namespace PL_Web.Controllers
     public class UsuarioController : Controller
     {
         // Crud Consumiendo servicios soap solo con una referencia y un objeto
+        //=========================================================================================
         /*
         [HttpGet]
         public ActionResult GetAll()
@@ -156,16 +157,7 @@ namespace PL_Web.Controllers
                 return View(usuario);
             }
         }
-        */
 
-        public byte[] ConvertirAArrayBytes(HttpPostedFileBase file)
-        {
-            System.IO.BinaryReader reader = new System.IO.BinaryReader(file.InputStream);
-            byte[] bytes = reader.ReadBytes((int)file.ContentLength);
-            return bytes;
-        }
-
-        /*
         [HttpGet]
         public ActionResult Delete(int IdUsuario)
         {
@@ -177,6 +169,13 @@ namespace PL_Web.Controllers
             return PartialView("_MessageNotification");
         }
         */
+
+        public byte[] ConvertirAArrayBytes(HttpPostedFileBase file)
+        {
+            System.IO.BinaryReader reader = new System.IO.BinaryReader(file.InputStream);
+            byte[] bytes = reader.ReadBytes((int)file.ContentLength);
+            return bytes;
+        }
 
         [HttpPost]
         public JsonResult CambiarEstatus(int IdUsuario, bool Estatus)
@@ -306,6 +305,7 @@ namespace PL_Web.Controllers
 
 
         // Crud Consumiendo servicios soap haciendo peticiones post
+        //================================================================================================
         [HttpGet]
         public ActionResult GetAll()
         {
@@ -493,10 +493,7 @@ namespace PL_Web.Controllers
             }
             else
             {
-                //ML.Result result = BL.Usuarios.GetByIDEF(IdUsuario.Value);// se usa EF
-                //usuario = (ML.Usuario)result.Object;// se usa EF
-                UsuarioReference.UsuarioClient objectUsuario = new UsuarioReference.UsuarioClient();
-                var result = objectUsuario.GetById(IdUsuario.Value);
+                ML.Result result = GetByIdXML(IdUsuario.Value);
                 usuario = (ML.Usuario)result.Object;
                 ML.Result resultColonia = BL.Colonia.GetByIdMunicipio(usuario.Direccion.Colonia.Municipio.IdMunicipio);
                 ML.Result resultMunicipio = BL.Municipio.GetByIdEstado(usuario.Direccion.Colonia.Municipio.Estado.IdEstado);
@@ -515,29 +512,10 @@ namespace PL_Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                HttpPostedFileBase file = Request.Files["ImagenUpload"];
-                if (file != null && file.ContentLength != 0)
-                {
-                    usuario.Imagen = ConvertirAArrayBytes(file);
-                }
-                if (usuario.IdUsuario == 0)
-                {
-                    //ML.Result result = BL.Usuarios.AddEF(usuario);// se usa EF
-                    UsuarioReference.UsuarioClient objectUsuario = new UsuarioReference.UsuarioClient();
-                    var result = objectUsuario.Add(usuario);
-                    ViewBag.succesMessage = "El usuario se inserto de manera correcta";
-                    ViewBag.result = result;
-                    return PartialView("_MessageNotification");
-                }
-                else
-                {
-                    //ML.Result result = BL.Usuarios.UpdateEF(usuario);// se usa EF
-                    UsuarioReference.UsuarioClient objectUsuario = new UsuarioReference.UsuarioClient();
-                    var result = objectUsuario.Update(usuario);
-                    ViewBag.succesMessage = "El usuario se actualizo de manera correcta";
-                    ViewBag.result = result;
-                    return PartialView("_MessageNotification");
-                }
+                ML.Result result = AddOrUpdateXML(usuario);
+                ViewBag.succesMessage = usuario.IdUsuario == 0 ? "El usuario se inserto de manera correcta" : "El usuario se actualizo de manera correcta";
+                ViewBag.result = result;
+                return PartialView("_MessageNotification");
             }
             else
             {
@@ -559,6 +537,153 @@ namespace PL_Web.Controllers
                 }
                 return View(usuario);
             }
+        }
+
+        //Petición Add or Update
+        [NonAction]
+        public string CreateXMLUsuario(ML.Usuario usuario)
+        {
+            string xml = $@"";
+            if (usuario.IdUsuario == 0)
+            {
+                xml = $@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:tem=""http://tempuri.org/"" xmlns:ml=""http://schemas.datacontract.org/2004/07/ML"" xmlns:arr=""http://schemas.microsoft.com/2003/10/Serialization/Arrays"">
+                   <soapenv:Header/>
+                   <soapenv:Body>
+                      <tem:Add>
+                        <tem:usuario>
+                            <ml:ApellidoMaterno>{EscapeXml(usuario.ApellidoMaterno)}</ml:ApellidoMaterno>
+                            <ml:ApellidoPaterno>{EscapeXml(usuario.ApellidoPaterno)}</ml:ApellidoPaterno>
+                            <ml:CURP>{EscapeXml(usuario.CURP)}</ml:CURP>
+                            <ml:Celular>{EscapeXml(usuario.Celular)}</ml:Celular>
+                            <ml:Direccion>
+                                <ml:Calle>{EscapeXml(usuario.Direccion.Calle)}</ml:Calle>
+                                <ml:Colonia>
+                                    <ml:IdColonia>{usuario.Direccion.Colonia.IdColonia}</ml:IdColonia>
+                                    <ml:Municipio>
+                                        <ml:Estado>
+                                            <ml:IdEstado>{usuario.Direccion.Colonia.Municipio.Estado.IdEstado}</ml:IdEstado>
+                                        </ml:Estado>
+                                        <ml:IdMunicipio>{usuario.Direccion.Colonia.Municipio.IdMunicipio}</ml:IdMunicipio>
+                                    </ml:Municipio>
+                                </ml:Colonia>
+                                <ml:NumeroExterior>{EscapeXml(usuario.Direccion.NumeroExterior)}</ml:NumeroExterior>
+                                <ml:NumeroInterior>{EscapeXml(usuario.Direccion.NumeroInterior)}</ml:NumeroInterior>
+                            </ml:Direccion>
+                           <ml:Email>{EscapeXml(usuario.Email)}</ml:Email>
+                           <ml:Estatus>{usuario.Estatus.ToString().ToLower()}</ml:Estatus>
+                           <ml:FechaNacimiento>{usuario.FechaNacimiento}</ml:FechaNacimiento>
+                           <ml:Imagen></ml:Imagen>
+                           <ml:Nombre>{EscapeXml(usuario.Nombre)}</ml:Nombre>
+                           <ml:Password>{EscapeXml(usuario.Password)}</ml:Password>
+                           <ml:Rol>
+                              <ml:IdRol>{usuario.Rol.IdRol}</ml:IdRol>
+                           </ml:Rol>
+                           <ml:Sexo>{EscapeXml(usuario.Sexo)}</ml:Sexo>
+                           <ml:Telefono>{EscapeXml(usuario.Telefono)}</ml:Telefono>
+                           <ml:UserName>{EscapeXml(usuario.UserName)}</ml:UserName>
+                        </tem:usuario>
+                      </tem:Add>
+                   </soapenv:Body>
+                </soapenv:Envelope>";
+            }
+            else
+            {
+                xml = $@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:tem=""http://tempuri.org/"" xmlns:ml=""http://schemas.datacontract.org/2004/07/ML"" xmlns:arr=""http://schemas.microsoft.com/2003/10/Serialization/Arrays"">
+                   <soapenv:Header/>
+                   <soapenv:Body>
+                      <tem:Update>
+                        <tem:usuario>
+                        <ml:ApellidoMaterno>{EscapeXml(usuario.ApellidoMaterno)}</ml:ApellidoMaterno>
+                        <ml:ApellidoPaterno>{EscapeXml(usuario.ApellidoPaterno)}</ml:ApellidoPaterno>
+                        <ml:CURP>{EscapeXml(usuario.CURP)}</ml:CURP>
+                        <ml:Celular>{EscapeXml(usuario.Celular)}</ml:Celular>
+                        <ml:Direccion>
+                            <ml:Calle>{EscapeXml(usuario.Direccion.Calle)}</ml:Calle>
+                            <ml:Colonia>
+                                <ml:IdColonia>{usuario.Direccion.Colonia.IdColonia}</ml:IdColonia>
+                                <ml:Municipio>
+                                    <ml:Estado>
+                                    <ml:IdEstado>{usuario.Direccion.Colonia.Municipio.Estado.IdEstado}</ml:IdEstado>
+                                    </ml:Estado>
+                                    <ml:IdMunicipio>{usuario.Direccion.Colonia.Municipio.IdMunicipio}</ml:IdMunicipio>
+                                </ml:Municipio>
+                            </ml:Colonia>
+                            <ml:IdDireccion>{usuario.Direccion.IdDireccion}</ml:IdDireccion>
+                            <ml:NumeroExterior>{EscapeXml(usuario.Direccion.NumeroExterior)}</ml:NumeroExterior>
+                            <ml:NumeroInterior>{EscapeXml(usuario.Direccion.NumeroInterior)}</ml:NumeroInterior>
+                        </ml:Direccion>
+                        <ml:Email>{EscapeXml(usuario.Email)}</ml:Email>
+                        <ml:Estatus>{usuario.Estatus.ToString().ToLower()}</ml:Estatus>
+                        <ml:FechaNacimiento>{usuario.FechaNacimiento}</ml:FechaNacimiento>
+                        <ml:IdUsuario>{usuario.IdUsuario}</ml:IdUsuario>
+                        <ml:Imagen></ml:Imagen>
+                        <ml:Nombre>{EscapeXml(usuario.Nombre)}</ml:Nombre>
+                        <ml:Password>{EscapeXml(usuario.Password)}</ml:Password>
+                        <ml:Rol>
+                            <ml:IdRol>{usuario.Rol.IdRol}</ml:IdRol>
+                        </ml:Rol>
+                        <ml:Sexo>{EscapeXml(usuario.Sexo)}</ml:Sexo>
+                        <ml:Telefono>{EscapeXml(usuario.Telefono)}</ml:Telefono>
+                        <ml:UserName>{EscapeXml(usuario.UserName)}</ml:UserName>
+                        </tem:usuario>
+                      </tem:Update>
+                   </soapenv:Body>
+                </soapenv:Envelope>";
+            }
+            return xml;
+        }
+
+        [NonAction]
+        public string EscapeXml(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            return input
+                .Replace("&", "&amp;")
+                .Replace("<", "&lt;")
+                .Replace(">", "&gt;")
+                .Replace("\"", "&quot;")
+                .Replace("'", "&apos;");
+        }
+
+        [HttpPost]
+        public ML.Result AddOrUpdateXML(ML.Usuario usuario)
+        {
+            ML.Result result = new ML.Result();
+            string accion = usuario.IdUsuario == 0 ? "http://tempuri.org/IUsuario/Add" : "http://tempuri.org/IUsuario/Update";
+            string url = "http://localhost:50944/Usuario.svc";
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.Headers.Add("SOAPAction", accion);
+            request.ContentType = "text/xml;charset=\"utf-8\"";
+            request.Accept = "text/xml";
+            request.Method = "POST";
+            string myXML = CreateXMLUsuario(usuario);
+            // Envia la solicitud
+            using (Stream stream = request.GetRequestStream())
+            {
+                byte[] content = Encoding.UTF8.GetBytes(myXML);
+                stream.Write(content, 0, content.Length);
+            }
+
+            // Obtengo la respuesta
+            try
+            {
+                using (WebResponse respuesta = request.GetResponse())
+                {
+                    using (StreamReader reader = new StreamReader(respuesta.GetResponseStream()))
+                    {
+                        string resultXML = reader.ReadToEnd();
+                        // Deserializar el XML y lo guardo en un result
+                        result = ResultXML(resultXML); // Captura el objeto completo
+                    }
+                }
+            }
+            catch (WebException ex)
+            {
+                result.Correct = false; result.Exception = ex; result.ErrorMessage = ex.Message;
+            }
+            return result;
         }
 
         //Petición GetById
@@ -598,7 +723,7 @@ namespace PL_Web.Controllers
                     {
                         string resultXML = reader.ReadToEnd();
                         // Deserializar el XML y lo guardo en un result
-                        result = ResultXML(resultXML); // Captura el objeto completo
+                        result = ResultGetByIdXML(resultXML); // Captura el objeto completo
                     }
                 }
             }
@@ -609,6 +734,82 @@ namespace PL_Web.Controllers
             return result;
         }
 
+        [NonAction]
+        public ML.Result ResultGetByIdXML(string xml)
+        {
+            ML.Result result = new ML.Result();
+            try {
+                var xdoc = XDocument.Parse(xml);
+                // Acceder a GetUsuarioByIdResult usando el namespace correcto
+                var usuarioElement = xdoc.Descendants().FirstOrDefault(e => e.Name.LocalName == "Object" && e.GetDefaultNamespace().NamespaceName == "http://tempuri.org/");
+
+                if (usuarioElement != null) {
+                    ML.Usuario usuario = new ML.Usuario
+                    {
+                        Rol = new ML.Rol(),
+                        Direccion = new ML.Direccion
+                        {
+                            Colonia = new ML.Colonia
+                            {
+                                Municipio = new ML.Municipio
+                                {
+                                    Estado = new ML.Estado()
+                                }
+                            }
+                        }
+                    };
+                    //Asigno los datos del XMLa mi modelo de usuario
+                    XNamespace ns = "http://schemas.datacontract.org/2004/07/ML";
+                    usuario.IdUsuario = int.TryParse(usuarioElement.Element(ns + "IdUsuario")?.Value, out int idUsuario) ? idUsuario : 0;
+                    usuario.Nombre = usuarioElement.Element(ns + "Nombre")?.Value ?? string.Empty;
+                    usuario.ApellidoPaterno = usuarioElement.Element(ns + "ApellidoPaterno")?.Value ?? string.Empty;
+                    usuario.ApellidoMaterno = usuarioElement.Element(ns + "ApellidoMaterno")?.Value ?? string.Empty;
+                    usuario.CURP = usuarioElement.Element(ns + "CURP")?.Value ?? string.Empty;
+                    usuario.Celular = usuarioElement.Element(ns + "Celular")?.Value ?? string.Empty;
+                    usuario.Email = usuarioElement.Element(ns + "Email")?.Value ?? string.Empty;
+                    usuario.Estatus = bool.TryParse(usuarioElement.Element(ns + "Estatus")?.Value, out bool estatus) && estatus;
+                    usuario.FechaNacimiento = usuarioElement.Element(ns + "FechaNacimiento")?.Value ?? string.Empty;
+                    usuario.Password = usuarioElement.Element(ns + "Password")?.Value ?? string.Empty;
+                    usuario.Sexo = usuarioElement.Element(ns + "Sexo")?.Value ?? string.Empty;
+                    usuario.Telefono = usuarioElement.Element(ns + "Telefono")?.Value ?? string.Empty;
+                    usuario.UserName = usuarioElement.Element(ns + "UserName")?.Value ?? string.Empty;
+                    var rolElement = usuarioElement.Element(ns + "Rol");
+                    if (rolElement != null)
+                    {
+                        usuario.Rol.IdRol = int.TryParse(rolElement.Element(ns + "IdRol")?.Value, out int idRol) ? idRol : 0;
+                    }
+                    var direccionElement = usuarioElement.Element(ns + "Direccion");
+                    if (direccionElement != null)
+                    {
+                        usuario.Direccion.IdDireccion = int.TryParse(direccionElement.Element(ns + "IdDireccion")?.Value, out int idDireccion) ? idDireccion : 0;
+                        usuario.Direccion.Calle = direccionElement.Element(ns + "Calle")?.Value ?? string.Empty;
+                        usuario.Direccion.NumeroExterior = direccionElement.Element(ns + "NumeroExterior")?.Value ?? string.Empty;
+                        usuario.Direccion.NumeroInterior = direccionElement.Element(ns + "NumeroInterior")?.Value ?? string.Empty;
+                        var coloniaElement = direccionElement.Element(ns + "Colonia");
+                        if (coloniaElement != null)
+                        {
+                            usuario.Direccion.Colonia.IdColonia = int.TryParse(coloniaElement.Element(ns + "IdColonia")?.Value, out int idColonia) ? idColonia : 0;
+                            var municipioElement = coloniaElement.Element(ns + "Municipio");
+                            if (municipioElement != null)
+                            {
+                                usuario.Direccion.Colonia.Municipio.IdMunicipio = int.TryParse(municipioElement.Element(ns + "IdMunicipio")?.Value, out int idMunicipio) ? idMunicipio : 0;
+                                var estadoElement = municipioElement.Element(ns + "Estado");
+                                if (estadoElement != null)
+                                {
+                                    usuario.Direccion.Colonia.Municipio.Estado.IdEstado = int.TryParse(estadoElement.Element(ns + "IdEstado")?.Value, out int idEstado) ? idEstado : 0;
+                                }
+                            }
+                        }
+                    }
+                    result.Object = usuario;  result.Correct = true;
+                } else {
+                    result.Correct = false; result.ErrorMessage = "No se encontro el elemento Object en el XML";
+                }
+            } catch(Exception ex) {
+                result.Correct = false; result.Exception = ex; result.ErrorMessage = "Error al des-serializar el XML";
+            }
+            return result;
+        }
 
         //Petición Delete
         [HttpGet]
