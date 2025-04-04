@@ -11,6 +11,8 @@ using System.Data.OleDb;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.ServiceModel.Configuration;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
@@ -304,7 +306,7 @@ namespace PL_Web.Controllers
         }
 
 
-        // Crud Consumiendo servicios soap haciendo peticiones post
+        // Crud Consumiendo servicios soap haciendo peticiones post y Consumiendo Servicios REST
         //================================================================================================
         [HttpGet]
         public ActionResult GetAll()
@@ -317,10 +319,15 @@ namespace PL_Web.Controllers
             usuario.Nombre = "";
             usuario.ApellidoPaterno = "";
             usuario.ApellidoMaterno = "";
-            ML.Result result = GetAllXML(usuario);
+            //Result con servicios soap
+            //ML.Result result = GetAllXML(usuario);
+            //Result con servicios REST
+            ML.Result result = GetAllByREST(usuario);
             if (result.Correct)
             {
-                usuario.Usuarios = result.Objects.ToList();
+                //Con servicios soap
+                //usuario.Usuarios = result.Objects.ToList();
+                usuario.Usuarios = result.Objects;
             }
             else
             {
@@ -338,7 +345,10 @@ namespace PL_Web.Controllers
             usuario.ApellidoPaterno = usuario.ApellidoPaterno != null ? usuario.ApellidoPaterno : "";
             usuario.ApellidoMaterno = usuario.ApellidoMaterno != null ? usuario.ApellidoMaterno : "";
             usuario.Rol.IdRol = usuario.Rol.IdRol == 0 ? 0 : usuario.Rol.IdRol;
-            ML.Result result = GetAllXML(usuario);
+            //Result con servicios soap
+            //ML.Result result = GetAllXML(usuario);
+            //Result con servicios REST
+            ML.Result result = GetAllByREST(usuario);
             if (result.Correct)
             {
                 usuario.Usuarios = result.Objects.ToList();
@@ -350,8 +360,135 @@ namespace PL_Web.Controllers
             return View(usuario);
         }
 
+        //FORM
+        [HttpGet]
+        public ActionResult Form(int? IdUsuario)
+        {
+            ML.Usuario usuario = new ML.Usuario();
+            if (IdUsuario == null)
+            {
+                usuario.Rol = new ML.Rol();
+                usuario.Direccion = new ML.Direccion();
+                usuario.Direccion.Colonia = new ML.Colonia();
+                usuario.Direccion.Colonia.Municipio = new ML.Municipio();
+                usuario.Direccion.Colonia.Municipio.Estado = new ML.Estado();
+                usuario.Direccion.Colonia.Colonias = new List<object>();
+                usuario.Direccion.Colonia.Municipio.Municipios = new List<object>();
+            }
+            else
+            {
+                //Result con servicios soap
+                //ML.Result result = GetByIdXML(IdUsuario.Value);
+                //Result con servicios REST
+                ML.Result result = GetAllByIdREST(IdUsuario.Value);
+                usuario = (ML.Usuario)result.Object;
+                ML.Result resultColonia = BL.Colonia.GetByIdMunicipio(usuario.Direccion.Colonia.Municipio.IdMunicipio);
+                ML.Result resultMunicipio = BL.Municipio.GetByIdEstado(usuario.Direccion.Colonia.Municipio.Estado.IdEstado);
+                usuario.Direccion.Colonia.Colonias = resultColonia.Objects;
+                usuario.Direccion.Colonia.Municipio.Municipios = resultMunicipio.Objects;
+            }
+            ML.Result resultRoles = BL.Rol.GetAllEF();
+            usuario.Rol.Roles = resultRoles.Objects;
+            ML.Result resultEstados = BL.Estado.GetAllEF();
+            usuario.Direccion.Colonia.Municipio.Estado.Estados = resultEstados.Objects;
+            return View(usuario);
+        }
+
+        [HttpPost]
+        public ActionResult Form(ML.Usuario usuario)
+        {
+            if (ModelState.IsValid)
+            {
+                HttpPostedFileBase file = Request.Files["ImagenUpload"];
+                if (file != null && file.ContentLength != 0)
+                {
+                    usuario.Imagen = ConvertirAArrayBytes(file);
+                }
+                if (usuario.IdUsuario == 0)
+                {
+                    ML.Result result = AddByRest(usuario);
+                    ViewBag.succesMessage = "El usuario se inserto de manera correcta";
+                    ViewBag.result = result;
+                    return PartialView("_MessageNotification");
+                }
+                else
+                {
+                    ML.Result result = UpdateByRest(usuario);
+                    ViewBag.succesMessage = "El usuario se actualizo de manera correcta";
+                    ViewBag.result = result;
+                    return PartialView("_MessageNotification");
+                }
+            }
+            else
+            {
+                usuario.Direccion.Colonia.Colonias = new List<object>();
+                usuario.Direccion.Colonia.Municipio.Municipios = new List<object>();
+                ML.Result resultRoles = BL.Rol.GetAllEF();
+                usuario.Rol.Roles = resultRoles.Objects;
+                ML.Result resultEstado = BL.Estado.GetAllEF();
+                usuario.Direccion.Colonia.Municipio.Estado.Estados = resultEstado.Objects;
+                if (usuario.Direccion.Colonia.Municipio.Estado.IdEstado != 0)
+                {
+                    ML.Result resultMunicipio = BL.Municipio.GetByIdEstado(usuario.Direccion.Colonia.Municipio.Estado.IdEstado);
+                    usuario.Direccion.Colonia.Municipio.Municipios = resultMunicipio.Objects;
+                }
+                if (usuario.Direccion.Colonia.Municipio.IdMunicipio != 0)
+                {
+                    ML.Result resultColonia = BL.Colonia.GetByIdMunicipio(usuario.Direccion.Colonia.Municipio.IdMunicipio);
+                    usuario.Direccion.Colonia.Colonias = resultColonia.Objects;
+                }
+                return View(usuario);
+            }
+        }
+
+
+        //Form Insert or Update con Soap
+        /*[HttpPost]
+        public ActionResult Form(ML.Usuario usuario)
+        {
+            if (ModelState.IsValid)
+            {
+                ML.Result result = AddOrUpdateXML(usuario);
+                ViewBag.succesMessage = usuario.IdUsuario == 0 ? "El usuario se inserto de manera correcta" : "El usuario se actualizo de manera correcta";
+                ViewBag.result = result;
+                return PartialView("_MessageNotification");
+            }
+            else
+            {
+                usuario.Direccion.Colonia.Colonias = new List<object>();
+                usuario.Direccion.Colonia.Municipio.Municipios = new List<object>();
+                ML.Result resultRoles = BL.Rol.GetAllEF();
+                usuario.Rol.Roles = resultRoles.Objects;
+                ML.Result resultEstado = BL.Estado.GetAllEF();
+                usuario.Direccion.Colonia.Municipio.Estado.Estados = resultEstado.Objects;
+                if (usuario.Direccion.Colonia.Municipio.Estado.IdEstado != 0)
+                {
+                    ML.Result resultMunicipio = BL.Municipio.GetByIdEstado(usuario.Direccion.Colonia.Municipio.Estado.IdEstado);
+                    usuario.Direccion.Colonia.Municipio.Municipios = resultMunicipio.Objects;
+                }
+                if (usuario.Direccion.Colonia.Municipio.IdMunicipio != 0)
+                {
+                    ML.Result resultColonia = BL.Colonia.GetByIdMunicipio(usuario.Direccion.Colonia.Municipio.IdMunicipio);
+                    usuario.Direccion.Colonia.Colonias = resultColonia.Objects;
+                }
+                return View(usuario);
+            }
+        }*/
+
+        [HttpGet]
+        public ActionResult Delete(int IdUsuario)
+        {
+            //Con servicios soap
+            //ML.Result result = DeleteXML(IdUsuario);
+            ML.Result result = DeleteREST(IdUsuario);
+            ViewBag.succesMessage = "El usuario se elimino de manera correcta";
+            ViewBag.result = result;
+            return PartialView("_MessageNotification");
+        }
+
+        //=========================================Peticiones XML=========================================
         //Petición GetAll
-        [NonAction]
+        [HttpPost]
         public ML.Result GetAllXML(ML.Usuario usuario)
         {
             ML.Result result = new ML.Result();
@@ -412,7 +549,7 @@ namespace PL_Web.Controllers
             var xdoc = XDocument.Parse(xml);
             // Acceder a GetAllUsuarioResult
             var objects = xdoc.Descendants("{http://schemas.microsoft.com/2003/10/Serialization/Arrays}anyType");
-            if(objects.Count() != 0)
+            if (objects.Count() != 0)
             {
                 result.Objects = new List<object>();
                 foreach (var usuarioGet in objects)
@@ -458,11 +595,11 @@ namespace PL_Web.Controllers
                             {
                                 usuario.Direccion.Colonia.Municipio.Nombre = (string)(municipioElement.Element("{http://schemas.datacontract.org/2004/07/ML}Nombre")?.Value ?? string.Empty);
                                 var estadoElement = municipioElement.Element("{http://schemas.datacontract.org/2004/07/ML}Estado");
-                                if(estadoElement != null)
+                                if (estadoElement != null)
                                 {
                                     usuario.Direccion.Colonia.Municipio.Estado.Nombre = (string)(estadoElement.Element("{http://schemas.datacontract.org/2004/07/ML}Nombre")?.Value ?? string.Empty);
                                 }
-                            } 
+                            }
                         }
                     }
                     result.Objects.Add(usuario);
@@ -474,69 +611,6 @@ namespace PL_Web.Controllers
                 result.Correct = false; result.ErrorMessage = "No se encontraron registros.";
             }
             return result;
-        }
-
-        //FORM
-        [HttpGet]
-        public ActionResult Form(int? IdUsuario)
-        {
-            ML.Usuario usuario = new ML.Usuario();
-            if (IdUsuario == null)
-            {
-                usuario.Rol = new ML.Rol();
-                usuario.Direccion = new ML.Direccion();
-                usuario.Direccion.Colonia = new ML.Colonia();
-                usuario.Direccion.Colonia.Municipio = new ML.Municipio();
-                usuario.Direccion.Colonia.Municipio.Estado = new ML.Estado();
-                usuario.Direccion.Colonia.Colonias = new List<object>();
-                usuario.Direccion.Colonia.Municipio.Municipios = new List<object>();
-            }
-            else
-            {
-                ML.Result result = GetByIdXML(IdUsuario.Value);
-                usuario = (ML.Usuario)result.Object;
-                ML.Result resultColonia = BL.Colonia.GetByIdMunicipio(usuario.Direccion.Colonia.Municipio.IdMunicipio);
-                ML.Result resultMunicipio = BL.Municipio.GetByIdEstado(usuario.Direccion.Colonia.Municipio.Estado.IdEstado);
-                usuario.Direccion.Colonia.Colonias = resultColonia.Objects;
-                usuario.Direccion.Colonia.Municipio.Municipios = resultMunicipio.Objects;
-            }
-            ML.Result resultRoles = BL.Rol.GetAllEF();
-            usuario.Rol.Roles = resultRoles.Objects;
-            ML.Result resultEstados = BL.Estado.GetAllEF();
-            usuario.Direccion.Colonia.Municipio.Estado.Estados = resultEstados.Objects;
-            return View(usuario);
-        }
-
-        [HttpPost]
-        public ActionResult Form(ML.Usuario usuario)
-        {
-            if (ModelState.IsValid)
-            {
-                ML.Result result = AddOrUpdateXML(usuario);
-                ViewBag.succesMessage = usuario.IdUsuario == 0 ? "El usuario se inserto de manera correcta" : "El usuario se actualizo de manera correcta";
-                ViewBag.result = result;
-                return PartialView("_MessageNotification");
-            }
-            else
-            {
-                usuario.Direccion.Colonia.Colonias = new List<object>();
-                usuario.Direccion.Colonia.Municipio.Municipios = new List<object>();
-                ML.Result resultRoles = BL.Rol.GetAllEF();
-                usuario.Rol.Roles = resultRoles.Objects;
-                ML.Result resultEstado = BL.Estado.GetAllEF();
-                usuario.Direccion.Colonia.Municipio.Estado.Estados = resultEstado.Objects;
-                if (usuario.Direccion.Colonia.Municipio.Estado.IdEstado != 0)
-                {
-                    ML.Result resultMunicipio = BL.Municipio.GetByIdEstado(usuario.Direccion.Colonia.Municipio.Estado.IdEstado);
-                    usuario.Direccion.Colonia.Municipio.Municipios = resultMunicipio.Objects;
-                }
-                if (usuario.Direccion.Colonia.Municipio.IdMunicipio != 0)
-                {
-                    ML.Result resultColonia = BL.Colonia.GetByIdMunicipio(usuario.Direccion.Colonia.Municipio.IdMunicipio);
-                    usuario.Direccion.Colonia.Colonias = resultColonia.Objects;
-                }
-                return View(usuario);
-            }
         }
 
         //Petición Add or Update
@@ -812,16 +886,7 @@ namespace PL_Web.Controllers
         }
 
         //Petición Delete
-        [HttpGet]
-        public ActionResult Delete(int IdUsuario)
-        {
-            ML.Result result = DeleteXML(IdUsuario);
-            ViewBag.succesMessage = "El usuario se elimino de manera correcta";
-            ViewBag.result = result;
-            return PartialView("_MessageNotification");
-        }
-
-        [NonAction]
+        [HttpPost]
         public ML.Result DeleteXML(int IdUsuario)
         {
             ML.Result result = new ML.Result();
@@ -875,6 +940,189 @@ namespace PL_Web.Controllers
             var xdoc = XDocument.Parse(xml);
             result.Correct = bool.TryParse(xdoc.Descendants("{http://schemas.datacontract.org/2004/07/SL_WCF}Correct").FirstOrDefault()?.Value, out bool correct) && correct;
             result.ErrorMessage = xdoc.Descendants("{http://schemas.datacontract.org/2004/07/SL_WCF}ErrorMessage").FirstOrDefault()?.Value ?? string.Empty;
+            return result;
+        }
+
+
+        //=========================================Peticiones REST=========================================
+        [NonAction]
+        public ML.Result GetAllByREST(ML.Usuario usuario)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using(var client = new HttpClient())
+                {
+                    string url = ConfigurationManager.AppSettings["EndPointUsuario"].ToString();
+                    //RecuperarBaseAddress de AppSettings 
+                    client.BaseAddress = new Uri(url);
+                    var responseTask = client.PostAsJsonAsync<ML.Usuario>("GetAll", usuario);
+                    responseTask.Wait(); //abrir otro hilo
+                    var resultServicio = responseTask.Result;
+                    if (resultServicio.IsSuccessStatusCode)
+                    {
+                        var readTask = resultServicio.Content.ReadAsAsync<ML.Result>();
+                        readTask.Wait();
+
+                        if (readTask.Result.Objects.Count() > 0)
+                        {
+                            result.Objects = new List<object>();
+                            foreach (var resultItem in readTask.Result.Objects)
+                            {
+                                ML.Usuario newUser = Newtonsoft.Json.JsonConvert.DeserializeObject<ML.Usuario>(resultItem.ToString());
+                                result.Objects.Add(newUser);
+                            }
+                        }   
+                        result.Correct = readTask.Result.Correct; result.ErrorMessage = readTask.Result.ErrorMessage; result.Exception = readTask.Result.Exception;
+                    }
+                    else
+                    {
+                        result.Correct = false; result.ErrorMessage = "Error al obtener los usuarios";
+                    }
+                }
+            }
+            catch (Exception ex) { 
+                result.Correct = false; result.Exception = ex; result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
+        
+        [NonAction]
+        public ML.Result GetAllByIdREST(int IdUsuario)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using(var client = new HttpClient())
+                {
+                    string url = ConfigurationManager.AppSettings["EndPointUsuario"].ToString();
+                    //RecuperarBaseAddress de AppSettings 
+                    client.BaseAddress = new Uri(url);
+                    var responseTask = client.GetAsync($"GetById/{IdUsuario}");
+                    responseTask.Wait(); //abrir otro hilo
+                    var resultServicio = responseTask.Result;
+                    if (resultServicio.IsSuccessStatusCode)
+                    {
+                        var readTask = resultServicio.Content.ReadAsAsync<ML.Result>();
+                        readTask.Wait();
+                        ML.Usuario newUser = readTask.Result.Object != null ? Newtonsoft.Json.JsonConvert.DeserializeObject<ML.Usuario>(readTask.Result.Object.ToString()) : null;
+                        result.Object = newUser; result.Correct = readTask.Result.Correct; result.ErrorMessage = readTask.Result.ErrorMessage; result.Exception = readTask.Result.Exception;
+                    }
+                    else
+                    {
+                        result.Correct = false; result.ErrorMessage = "Error al obtener los usuarios";
+                    }
+                }
+            }
+            catch (Exception ex) { 
+                result.Correct = false; result.Exception = ex; result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
+
+        [NonAction]
+        public ML.Result AddByRest(ML.Usuario usuario)
+        {
+            usuario.ImagenBase64 = usuario.Imagen != null ? Convert.ToBase64String(usuario.Imagen) : "";
+            usuario.Imagen = null;
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    string url = ConfigurationManager.AppSettings["EndPointUsuario"].ToString();
+                    //RecuperarBaseAddress de AppSettings 
+                    client.BaseAddress = new Uri(url);
+                    var responseTask = client.PostAsJsonAsync<ML.Usuario>("Add", usuario);
+                    responseTask.Wait(); //abrir otro hilo
+                    var resultServicio = responseTask.Result;
+                    if (resultServicio.IsSuccessStatusCode)
+                    {
+                        var readTask = resultServicio.Content.ReadAsAsync<ML.Result>();
+                        readTask.Wait();
+
+                        result.Correct = readTask.Result.Correct; result.ErrorMessage = readTask.Result.ErrorMessage; result.Exception = readTask.Result.Exception;
+                    }
+                    else
+                    {
+                        result.Correct = false; result.ErrorMessage = "Error al hacer la petición";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false; result.Exception = ex; result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
+
+        [NonAction]
+        public ML.Result UpdateByRest(ML.Usuario usuario)
+        {
+            usuario.ImagenBase64 = usuario.Imagen != null ? Convert.ToBase64String(usuario.Imagen) : "";
+            usuario.Imagen = null;
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    string url = ConfigurationManager.AppSettings["EndPointUsuario"].ToString();
+                    //RecuperarBaseAddress de AppSettings 
+                    client.BaseAddress = new Uri(url);
+                    var responseTask = client.PutAsJsonAsync<ML.Usuario>($"Update/{usuario.IdUsuario}", usuario);
+                    responseTask.Wait(); //abrir otro hilo
+                    var resultServicio = responseTask.Result;
+                    if (resultServicio.IsSuccessStatusCode)
+                    {
+                        var readTask = resultServicio.Content.ReadAsAsync<ML.Result>();
+                        readTask.Wait();
+
+                        result.Correct = readTask.Result.Correct; result.ErrorMessage = readTask.Result.ErrorMessage; result.Exception = readTask.Result.Exception;
+                    }
+                    else
+                    {
+                        result.Correct = false; result.ErrorMessage = "Error al hacer la petición";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false; result.Exception = ex; result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
+
+        [NonAction]
+        public ML.Result DeleteREST(int IdUsuario)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    string url = ConfigurationManager.AppSettings["EndPointUsuario"].ToString();
+                    //RecuperarBaseAddress de AppSettings 
+                    client.BaseAddress = new Uri(url);
+                    var responseTask = client.DeleteAsync($"Delete/{IdUsuario}");
+                    responseTask.Wait(); //abrir otro hilo
+                    var resultServicio = responseTask.Result;
+                    if (resultServicio.IsSuccessStatusCode)
+                    {
+                        var readTask = resultServicio.Content.ReadAsAsync<ML.Result>();
+                        readTask.Wait();
+
+                        result.Correct = readTask.Result.Correct; result.ErrorMessage = readTask.Result.ErrorMessage; result.Exception = readTask.Result.Exception;
+                    }
+                    else
+                    {
+                        result.Correct = false; result.ErrorMessage = "Error al hacer la petición";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false; result.Exception = ex; result.ErrorMessage = ex.Message;
+            }
             return result;
         }
 

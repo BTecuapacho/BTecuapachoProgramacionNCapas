@@ -780,8 +780,8 @@ namespace BL
                             usuario.Estatus = Convert.ToBoolean(usuarioGet.Estatus);
                             usuario.CURP = usuarioGet.CURP;
                             usuario.UserName = usuarioGet.UserName;
-                            //usuario.ImagenBase64 = usuarioGet.Imagen != null ? Convert.ToBase64String(usuarioGet.Imagen) : "";
-                            usuario.ImagenBase64 = "";
+                            usuario.ImagenBase64 = usuarioGet.Imagen != null ? Convert.ToBase64String(usuarioGet.Imagen) : "";
+                            //usuario.ImagenBase64 = "";
                             usuario.Rol.Nombre = usuarioGet.NombreRol != null? usuarioGet.NombreRol:"Sin rol asignado";
                             usuario.Direccion.Calle = usuarioGet.calle;
                             usuario.Direccion.NumeroInterior = usuarioGet.NumeroInterior;
@@ -834,8 +834,8 @@ namespace BL
                             Estatus = Convert.ToBoolean(usuario.Estatus),
                             CURP = usuario.CURP,
                             UserName = usuario.UserName,
-                            //Imagen = usuario.Imagen,
-                            Imagen = null,
+                            Imagen = usuario.Imagen,
+                            ImagenBase64 = usuario.Imagen != null ? Convert.ToBase64String(usuario.Imagen) : "",
                             Rol = new ML.Rol(),
                             Direccion = new ML.Direccion()
                         };

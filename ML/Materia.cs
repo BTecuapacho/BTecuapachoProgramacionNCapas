@@ -8,9 +8,9 @@ namespace ML
 {
     public class Materia
     {
-        public int Clave { get; set; }
+        public int IdMateria { get; set; }
         public string Nombre { get; set; }
         public int Costo { get; set; }
-        public int Creditos { get; set; }
+        public List<object> Materias { get; set; }
     }
 }
