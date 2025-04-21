@@ -380,7 +380,7 @@ namespace PL_Web.Controllers
                 //Result con servicios soap
                 //ML.Result result = GetByIdXML(IdUsuario.Value);
                 //Result con servicios REST
-                ML.Result result = GetAllByIdREST(IdUsuario.Value);
+                ML.Result result = GetByIdREST(IdUsuario.Value);
                 usuario = (ML.Usuario)result.Object;
                 ML.Result resultColonia = BL.Colonia.GetByIdMunicipio(usuario.Direccion.Colonia.Municipio.IdMunicipio);
                 ML.Result resultMunicipio = BL.Municipio.GetByIdEstado(usuario.Direccion.Colonia.Municipio.Estado.IdEstado);
@@ -988,7 +988,7 @@ namespace PL_Web.Controllers
         }
         
         [NonAction]
-        public ML.Result GetAllByIdREST(int IdUsuario)
+        public ML.Result GetByIdREST(int IdUsuario)
         {
             ML.Result result = new ML.Result();
             try
