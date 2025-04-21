@@ -33,7 +33,7 @@ function SoloLetras(event) {
 }
 
 function SoloEmail() {
-    var regExp = new RegExp(/^[a-z0-9!#$%&' * +/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/)
+    var regExp = new RegExp(/^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/)
     var inputField = $('#Email')[0]
     var errorMessage = inputField.parentNode.querySelector('.error')
     errorMessage.textContent = ''

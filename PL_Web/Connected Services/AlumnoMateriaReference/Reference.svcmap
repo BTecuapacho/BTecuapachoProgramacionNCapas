@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="8b6832d4-4156-4913-a01b-2636fa36981a" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://alien3/ControlEscolarSOAP/AlumnoMateria.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="AlumnoMateria.disco" MetadataType="Disco" ID="bf4a5cc9-7514-4a8e-99c6-c038b473aa18" SourceId="1" SourceUrl="http://alien3/ControlEscolarSOAP/AlumnoMateria.svc?disco" />
+    <MetadataFile FileName="AlumnoMateria.wsdl" MetadataType="Wsdl" ID="3151b251-625a-4e4c-b6f2-2e29bac8636e" SourceId="1" SourceUrl="http://alien3/ControlEscolarSOAP/AlumnoMateria.svc?wsdl" />
+    <MetadataFile FileName="AlumnoMateria.xsd" MetadataType="Schema" ID="da84a9e2-9366-4071-a89c-907b686f96f5" SourceId="1" SourceUrl="http://alien3/ControlEscolarSOAP/AlumnoMateria.svc?xsd=xsd3" />
+    <MetadataFile FileName="AlumnoMateria1.xsd" MetadataType="Schema" ID="168a9c7f-30dc-4a47-aba5-b7ab719bd4d2" SourceId="1" SourceUrl="http://alien3/ControlEscolarSOAP/AlumnoMateria.svc?xsd=xsd2" />
+    <MetadataFile FileName="AlumnoMateria2.xsd" MetadataType="Schema" ID="31c99d37-7e6f-4710-a392-93121a648fa7" SourceId="1" SourceUrl="http://alien3/ControlEscolarSOAP/AlumnoMateria.svc?xsd=xsd1" />
+    <MetadataFile FileName="AlumnoMateria3.xsd" MetadataType="Schema" ID="d9371a7f-4ce1-4ced-8e67-e0bea8bb1485" SourceId="1" SourceUrl="http://alien3/ControlEscolarSOAP/AlumnoMateria.svc?xsd=xsd0" />
+    <MetadataFile FileName="AlumnoMateria4.xsd" MetadataType="Schema" ID="ed52fbc1-e503-42d8-8673-18157efa5ae8" SourceId="1" SourceUrl="http://alien3/ControlEscolarSOAP/AlumnoMateria.svc?xsd=xsd5" />
+    <MetadataFile FileName="AlumnoMateria5.xsd" MetadataType="Schema" ID="14dc5606-b08b-4d83-96e8-144b76b955ed" SourceId="1" SourceUrl="http://alien3/ControlEscolarSOAP/AlumnoMateria.svc?xsd=xsd4" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

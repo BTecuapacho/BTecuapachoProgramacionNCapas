@@ -6,7 +6,8 @@
     if (Model.Sexo != null)
     {
         string imgSexo = Model.Sexo == "HO" ? "usuarioMasculino.png" : "usuarioFemenino.png";
-        src = Model.Imagen != null ? "data:image/png;base64," + Convert.ToBase64String(Model.Imagen) : "/content/imagenes/" + imgSexo;
+        //src = Model.Imagen != null && Model.Imagen.Length > 0 ? "data:image/png;base64," + Convert.ToBase64String(Model.Imagen) : "/content/imagenes/" + imgSexo;
+        src = Model.ImagenBase64 != null && Model.ImagenBase64 != "" ? "data:image/png;base64," + Model.ImagenBase64 : "/content/imagenes/" + imgSexo;
     }
     else
     {

@@ -165,7 +165,7 @@
                                                 </span>
                                                 @{
                                                     string imgSexo = usuario.Sexo == "HO" ? "usuarioMasculino.png" : "usuarioFemenino.png";
-                                                    string src = usuario.Imagen != null ? "data:image/png;base64," + Convert.ToBase64String(usuario.Imagen) : "/content/imagenes/" + imgSexo;
+                                                    string src = usuario.ImagenBase64 != "" && usuario.ImagenBase64 != null ? "data:image/png;base64," + usuario.ImagenBase64 : "/content/imagenes/" + imgSexo;
                                                 }
                                                 <div class="text-center mb-1">
                                                     <img style="width:15%" alt="Imagen @usuario.Nombre @usuario.ApellidoPaterno @usuario.ApellidoMaterno" src="@src" class="me-1" />
