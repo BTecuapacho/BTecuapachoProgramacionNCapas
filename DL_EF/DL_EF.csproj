@@ -65,6 +65,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>BTecuapachoProgramacionNCapas.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Categoria.cs">
+      <DependentUpon>BTecuapachoProgramacionNCapas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Class1.cs" />
     <Compile Include="Colonia.cs">
       <DependentUpon>BTecuapachoProgramacionNCapas.tt</DependentUpon>
@@ -87,11 +90,23 @@
     <Compile Include="MunicipioGetByIdEstado_Result.cs">
       <DependentUpon>BTecuapachoProgramacionNCapas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Producto.cs">
+      <DependentUpon>BTecuapachoProgramacionNCapas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProductoGetAll_Result.cs">
+      <DependentUpon>BTecuapachoProgramacionNCapas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rol.cs">
+      <DependentUpon>BTecuapachoProgramacionNCapas.tt</DependentUpon>
+    </Compile>
     <Compile Include="RolGetAll_Result.cs">
       <DependentUpon>BTecuapachoProgramacionNCapas.tt</DependentUpon>
     </Compile>
     <Compile Include="RolGetById_Result.cs">
+      <DependentUpon>BTecuapachoProgramacionNCapas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SubCategoria.cs">
       <DependentUpon>BTecuapachoProgramacionNCapas.tt</DependentUpon>
     </Compile>
     <Compile Include="Usuario.cs">
@@ -107,9 +122,6 @@
       <DependentUpon>BTecuapachoProgramacionNCapas.tt</DependentUpon>
     </Compile>
     <Compile Include="UsuarioGetById_Result.cs">
-      <DependentUpon>BTecuapachoProgramacionNCapas.tt</DependentUpon>
-    </Compile>
-    <Compile Include="x.cs">
       <DependentUpon>BTecuapachoProgramacionNCapas.tt</DependentUpon>
     </Compile>
   </ItemGroup>

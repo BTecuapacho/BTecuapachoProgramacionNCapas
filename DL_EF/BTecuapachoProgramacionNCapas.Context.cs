@@ -27,12 +27,15 @@ namespace DL_EF
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<x> x { get; set; }
-        public virtual DbSet<Usuario> Usuarios { get; set; }
+        public virtual DbSet<Categoria> Categorias { get; set; }
         public virtual DbSet<Colonia> Colonias { get; set; }
+        public virtual DbSet<Direccion> Direccions { get; set; }
         public virtual DbSet<Estado> Estadoes { get; set; }
         public virtual DbSet<Municipio> Municipios { get; set; }
-        public virtual DbSet<Direccion> Direccions { get; set; }
+        public virtual DbSet<Producto> Productoes { get; set; }
+        public virtual DbSet<Rol> Rols { get; set; }
+        public virtual DbSet<SubCategoria> SubCategorias { get; set; }
+        public virtual DbSet<Usuario> Usuarios { get; set; }
         public virtual DbSet<UsuarioGetAllView> UsuarioGetAllViews { get; set; }
     
         public virtual ObjectResult<Nullable<int>> UsuarioExist(Nullable<int> idUsuario)
@@ -345,6 +348,19 @@ namespace DL_EF
                 new ObjectParameter("IdRol", typeof(int));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<UsuarioGetAllWithView_Result>("UsuarioGetAllWithView", nombreParameter, apellidoPaternoParameter, apellidoMaternoParameter, idRolParameter);
+        }
+    
+        public virtual ObjectResult<ProductoGetAll_Result> ProductoGetAll(Nullable<int> idCategoria, Nullable<int> idSubCategoria)
+        {
+            var idCategoriaParameter = idCategoria.HasValue ?
+                new ObjectParameter("IdCategoria", idCategoria) :
+                new ObjectParameter("IdCategoria", typeof(int));
+    
+            var idSubCategoriaParameter = idSubCategoria.HasValue ?
+                new ObjectParameter("IdSubCategoria", idSubCategoria) :
+                new ObjectParameter("IdSubCategoria", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<ProductoGetAll_Result>("ProductoGetAll", idCategoriaParameter, idSubCategoriaParameter);
         }
     }
 }

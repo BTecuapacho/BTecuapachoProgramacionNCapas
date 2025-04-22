@@ -36,8 +36,8 @@ namespace DL_EF
         public Nullable<int> IdRol { get; set; }
         public string UserName { get; set; }
     
-        public virtual x Rol { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Direccion> Direccions { get; set; }
+        public virtual Rol Rol { get; set; }
     }
 }

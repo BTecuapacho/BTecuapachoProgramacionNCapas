@@ -12,10 +12,10 @@ namespace DL_EF
     using System;
     using System.Collections.Generic;
     
-    public partial class x
+    public partial class Rol
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public x()
+        public Rol()
         {
             this.Usuarios = new HashSet<Usuario>();
         }
