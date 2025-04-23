@@ -1,92 +1,134 @@
-﻿
+﻿@model ML.Producto
 @{
     ViewBag.Title = "GetAll";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<h2>GetAll</h2>
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-4 mb-4">
-            <div class="card overflow-hidden rounded-2 border shadow-lg">
-                <div class="position-relative">
-                    <a href="#" class="hover-img d-block overflow-hidden">
-                        <img src="https://bootstrapdemos.wrappixel.com/monster/dist/assets/images/products/s2.jpg" class="card-img-top rounded-0" alt="monster-img">
-                    </a>
-                    <a href="#" class="text-bg-warning rounded-3 p-2 text-white d-inline-flex position-absolute bottom-0 start-0 ms-3 opacity-75" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editar">
-                        <i class="bi bi-pen-fill opacity-100"></i>
-                    </a>
-                    <a href="#" class="text-bg-danger rounded-3 p-2 text-white d-inline-flex position-absolute bottom-0 end-0 me-3 opacity-75" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editar">
-                        <i class="bi bi-trash2-fill opacity-100"></i>
-                    </a>
-                </div>
-                <div class="card-body pt-3 p-4">
-                    <div class="d-flex align-items-center">
-                        <div>
-                            <h5 class="fs-6 fw-bold">Categoria</h5>
-                            <p class="fw-medium text-dark mb-2">Nombre Categoria</p>
-                        </div>
-                        <div class="ms-auto">
-                            <h5 class="fs-6 fw-bold">SubCategoria</h5>
-                            <p class="fw-medium text-dark mb-2">Nombre SubCategoria</p>
-                        </div>
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card p-4 shadow">
+            @using (Html.BeginForm("GetAll", "Producto", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+            {
+                <div class="row">
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(model => model.SubCategoria.Categoria.IdCategoria, new SelectList(Model.SubCategoria.Categoria.Categorias, "IdCategoria", "Nombre"), "Seleccione ua Categoria", new { @class = "form-select" })
                     </div>
-
-                    <h6 class="fw-bold fs-6">Nombre Producto</h6>
-                    <div class="d-flex align-items-center justify-content-between">
-                        <h6 class="fw-semibold fs-5 mb-2"> $285 
-                            @*<span class="ms-2 fw-normal text-muted fs-3"><del>$345</del></span>*@
-                        </h6>
+                    <div class="col-md-3">
+                        @if (Model.SubCategoria.SubCategorias != null && Model.SubCategoria.SubCategorias.Count() > 0)
+                        {
+                            @Html.DropDownListFor(model => model.SubCategoria.IdSubCategoria, new SelectList(Model.SubCategoria.SubCategorias, "IdSubCategoria", "Nombre"), "Seleccione ua subcategoria", new { @class = "form-select ", @onchange = "GetSubCategoriaByIdSubCategoria(), ValidateSelect('ddlSubCategoria')", @id = "ddlSubCategoria" })
+                        }
+                        else
+                        {
+                            @Html.DropDownListFor(model => model.SubCategoria.IdSubCategoria, new SelectList(String.Empty), "Seleccione ua subcategoria", new { @class = "form-select ", @onchange = "GetSubCategoriaByIdSubCategoria(), ValidateSelect('ddlSubCategoria')", @id = "ddlSubCategoria" })
+                        }
                     </div>
-                    @*<span class="ms-2 fw-normal text-muted fs-3">Categoria</span>*@
-                    <p class="mb-0 card-subtitle">
-                        Titudin venenatis ipsum ac feugiat. Vestibulum ullamcorper
-                        quam.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>    <div class="row">
-        <div class="col-md-4">
-            <div class="card overflow-hidden rounded-2 border shadow-lg">
-                <div class="position-relative">
-                    <a href="#" class="hover-img d-block overflow-hidden">
-                        <img src="https://bootstrapdemos.wrappixel.com/monster/dist/assets/images/products/s2.jpg" class="card-img-top rounded-0" alt="monster-img">
-                    </a>
-                    <a href="#" class="text-bg-warning rounded-3 p-2 text-white d-inline-flex position-absolute bottom-0 start-0 ms-3 opacity-75" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editar">
-                        <i class="bi bi-pen-fill opacity-100"></i>
-                    </a>
-                    <a href="#" class="text-bg-danger rounded-3 p-2 text-white d-inline-flex position-absolute bottom-0 end-0 me-3 opacity-75" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editar">
-                        <i class="bi bi-trash2-fill opacity-100"></i>
-                    </a>
-                </div>
-                <div class="card-body pt-3 p-4">
-                    <div class="d-flex align-items-center">
-                        <div>
-                            <h5 class="fs-6 fw-bold">Categoria</h5>
-                            <p class="fw-medium text-dark mb-2">Nombre Categoria</p>
-                        </div>
-                        <div class="ms-auto">
-                            <h5 class="fs-6 fw-bold">SubCategoria</h5>
-                            <p class="fw-medium text-dark mb-2">Nombre SubCategoria</p>
-                        </div>
+                    <div class="col-md-1">
+                        <button type="submit" class="rounded-pill btn btn-primary">
+                            <i class="bi bi-search"></i>
+                        </button>
                     </div>
-
-                    <h6 class="fw-bold fs-6">Nombre Producto</h6>
-                    <div class="d-flex align-items-center justify-content-between">
-                        <h6 class="fw-semibold fs-5 mb-2"> $285 
-                            @*<span class="ms-2 fw-normal text-muted fs-3"><del>$345</del></span>*@
-                        </h6>
-                    </div>
-                    @*<span class="ms-2 fw-normal text-muted fs-3">Categoria</span>*@
-                    <p class="mb-0 card-subtitle">
-                        Titudin venenatis ipsum ac feugiat. Vestibulum ullamcorper
-                        quam.
-                    </p>
                 </div>
-            </div>
+            }
         </div>
     </div>
 </div>
 
+<div class="container-fluid">
+    <h2>GetAll</h2>
+    <div class="row">
+        @if (Model.Productos.Count != 0)
+        {
+            foreach (ML.Producto producto in Model.Productos)
+            {
+                string src = producto.ImagenBase64 != "" && producto.ImagenBase64 != null ? "data:image/png;base64," + producto.ImagenBase64 : "/content/imagenes/SinIngredientes.png";
+
+                <div class="col-md-4 mb-4">
+                    <div class="card overflow-hidden rounded-2 border shadow-lg">
+                        <div class="position-relative">
+                            <a href="#" class="hover-img d-block overflow-hidden">
+                                <img src="@src" class="card-img-top rounded-0" alt="@producto.Nombre">
+                            </a>
+                            <button class="text-bg-warning rounded-3 p-2 text-white d-inline-flex position-absolute bottom-0 start-0 ms-3 opacity-75" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editar">
+                                <i class="bi bi-pen-fill opacity-100"></i>
+                            </button>
+                            <button class="text-bg-danger rounded-3 p-2 text-white d-inline-flex position-absolute bottom-0 end-0 me-3 opacity-75" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editar">
+                                <i class="bi bi-trash2-fill opacity-100"></i>
+                            </button>
+                        </div>
+                        <div class="card-body pt-3 p-4">
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <h5 class="fs-6 fw-bold">Categoria</h5>
+                                    <p class="fw-medium text-dark mb-2">@producto.SubCategoria.Categoria.Nombre</p>
+                                </div>
+                                <div class="ms-auto">
+                                    <h5 class="fs-6 fw-bold">SubCategoria</h5>
+                                    <p class="fw-medium text-dark mb-2">@producto.SubCategoria.Nombre</p>
+                                </div>
+                            </div>
+
+                            <h6 class="fw-bold fs-6">@producto.Nombre</h6>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <h6 class="fw-semibold fs-5 mb-2">
+                                    $@producto.Precio
+                                    @*<span class="ms-2 fw-normal text-muted fs-3"><del>$345</del></span>*@
+                                </h6>
+                            </div>
+                            @*<span class="ms-2 fw-normal text-muted fs-3">Categoria</span>*@
+                            <p class="mb-0 card-subtitle">
+                                @producto.Descripcion
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card p-5 text-center border shadow-lg">
+                        <h2 class="fw-bold">No se encontró ningun producto, haga una busqueda</h2>
+                        <center>
+                            <img src="~/Content/imagenes/BuscarProductos.png" alt="SinProsuctos" class="avatar-img m-5" width="25%" id="img">
+                        </center>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@Scripts.Render("~/bundles/jquery")
+<script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
+<script>
+    var urlGetByIdCategoria = '@Url.Action("GetByIdCategoria", "Producto")?IdCategoria='
+</script>
+
+<script>
+
+    function GetColoniasByIdMunicipio() {
+        let ddlCategoria = $('#ddlMunicipio').val()
+        if (ddlCategoria) {
+            $.ajax({
+                url: urlurlGetByIdCategoria + ddlCategoria,
+                type: "GET",
+                dataType: "JSON",
+                success: function (result) {
+                    if (result.Correct) {
+                        let ddlColonia = $('#ddlColonia').empty().append('<option value="">Seleccione una colonia</option>')
+                        $.each(result.Objects, function (i, valor) {
+                            let opcion = '<option value="' + valor.IdColonia + '">' + valor.Nombre + '</option>'
+                            ddlColonia.append(opcion)
+                        })
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr)
+                }
+            })
+        } else {
+            $("#ddlColonia").empty().append('<option value="">Seleccione una colonia</option>')
+        }
+    }
+</script>

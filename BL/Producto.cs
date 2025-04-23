@@ -8,14 +8,14 @@ namespace BL
 {
     public class Producto
     {
-        public static ML.Result GetAll(int IdCategoria, int IdSubCategoria)
+        public static ML.Result GetAll(ML.Producto productoIn)
         {
             ML.Result result = new ML.Result();
             try
             {
                 using (DL_EF.BTecuapachoProgramacionNCapasEntities context = new DL_EF.BTecuapachoProgramacionNCapasEntities())
                 {
-                    var Productos = context.ProductoGetAll(IdCategoria, IdSubCategoria).ToList();
+                    var Productos = context.ProductoGetAll(productoIn.SubCategoria.Categoria.IdCategoria, productoIn.SubCategoria.IdSubCategoria).ToList();
                     if(Productos.Count != 0)
                     {
                         result.Objects = new List<object>();
@@ -25,6 +25,7 @@ namespace BL
                             producto.IdProducto = Convert.ToInt32(dbProducto.IdProducto);
                             producto.Nombre = dbProducto.NombreProducto;
                             producto.Descripcion = dbProducto.Descripcion;
+                            producto.Precio = Convert.ToDecimal(dbProducto.Precio);
                             producto.ImagenBase64 = dbProducto.Imagen != null ? Convert.ToBase64String(dbProducto.Imagen) : "";
                             producto.SubCategoria.IdSubCategoria = Convert.ToInt32(dbProducto.IdProducto);
                             producto.SubCategoria.Nombre = dbProducto.NombreSubCategoria;

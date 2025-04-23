@@ -28,7 +28,7 @@ namespace BL
                         {
                             ML.Categoria categoria = new ML.Categoria();
                             categoria.IdCategoria = Convert.ToInt32(dbCategoria.IdCategora);
-                            categoria.Nombre = categoria.Nombre;
+                            categoria.Nombre = dbCategoria.Nombre;
                             result.Objects.Add(categoria);
                         }
                         result.Correct = true;
