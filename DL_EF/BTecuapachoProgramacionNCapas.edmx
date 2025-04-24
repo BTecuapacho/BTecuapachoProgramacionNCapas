@@ -224,9 +224,30 @@ warning 6002: The table/view 'BTecuapachoProgramacionNCapas.dbo.UsuarioGetAllVie
         <Function Name="MunicipioGetByIdEstado" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="IdEstado" Type="int" Mode="In" />
         </Function>
+        <Function Name="ProductoAdd" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Nombre" Type="varchar" Mode="In" />
+          <Parameter Name="Descripcion" Type="varchar" Mode="In" />
+          <Parameter Name="Precio" Type="decimal" Mode="In" />
+          <Parameter Name="IdSubCategoria" Type="int" Mode="In" />
+          <Parameter Name="Imagen" Type="varbinary(max)" Mode="In" />
+        </Function>
+        <Function Name="ProductoDelete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IdProducto" Type="int" Mode="In" />
+        </Function>
         <Function Name="ProductoGetAll" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="IdCategoria" Type="int" Mode="In" />
           <Parameter Name="IdSubCategoria" Type="int" Mode="In" />
+        </Function>
+        <Function Name="ProductoGetById" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IdProducto" Type="int" Mode="In" />
+        </Function>
+        <Function Name="ProductoUpdate" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IdProducto" Type="int" Mode="In" />
+          <Parameter Name="Nombre" Type="varchar" Mode="In" />
+          <Parameter Name="Descripcion" Type="varchar" Mode="In" />
+          <Parameter Name="Precio" Type="decimal" Mode="In" />
+          <Parameter Name="IdSubCategoria" Type="int" Mode="In" />
+          <Parameter Name="Imagen" Type="varbinary(max)" Mode="In" />
         </Function>
         <Function Name="RolAdd" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Nombre" Type="varchar" Mode="In" />
@@ -509,6 +530,27 @@ warning 6002: The table/view 'BTecuapachoProgramacionNCapas.dbo.UsuarioGetAllVie
           <FunctionImport Name="ProductoGetAll" ReturnType="Collection(BTecuapachoProgramacionNCapasModel.ProductoGetAll_Result)">
             <Parameter Name="IdCategoria" Mode="In" Type="Int32" />
             <Parameter Name="IdSubCategoria" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="ProductoAdd">
+            <Parameter Name="Nombre" Mode="In" Type="String" />
+            <Parameter Name="Descripcion" Mode="In" Type="String" />
+            <Parameter Name="Precio" Mode="In" Type="Decimal" />
+            <Parameter Name="IdSubCategoria" Mode="In" Type="Int32" />
+            <Parameter Name="Imagen" Mode="In" Type="Binary" />
+          </FunctionImport>
+          <FunctionImport Name="ProductoDelete">
+            <Parameter Name="IdProducto" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="ProductoGetById" ReturnType="Collection(BTecuapachoProgramacionNCapasModel.ProductoGetById_Result)">
+            <Parameter Name="IdProducto" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="ProductoUpdate">
+            <Parameter Name="IdProducto" Mode="In" Type="Int32" />
+            <Parameter Name="Nombre" Mode="In" Type="String" />
+            <Parameter Name="Descripcion" Mode="In" Type="String" />
+            <Parameter Name="Precio" Mode="In" Type="Decimal" />
+            <Parameter Name="IdSubCategoria" Mode="In" Type="Int32" />
+            <Parameter Name="Imagen" Mode="In" Type="Binary" />
           </FunctionImport>
         </EntityContainer>
         <ComplexType Name="RolGetAll_Result">
@@ -839,6 +881,17 @@ warning 6002: The table/view 'BTecuapachoProgramacionNCapas.dbo.UsuarioGetAllVie
           <Property Type="Int32" Name="IdCategoria" Nullable="true" />
           <Property Type="String" Name="NombreCategoria" Nullable="true" MaxLength="100" />
         </ComplexType>
+        <ComplexType Name="ProductoGetById_Result">
+          <Property Type="Int32" Name="IdProducto" Nullable="false" />
+          <Property Type="String" Name="NombreProducto" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="Descripcion" Nullable="true" MaxLength="500" />
+          <Property Type="Decimal" Name="Precio" Nullable="false" Precision="18" Scale="0" />
+          <Property Type="Binary" Name="Imagen" Nullable="true" />
+          <Property Type="Int32" Name="IdSubCategoria" Nullable="true" />
+          <Property Type="String" Name="NombreSubCategoria" Nullable="true" MaxLength="100" />
+          <Property Type="Int32" Name="IdCategoria" Nullable="true" />
+          <Property Type="String" Name="NombreCategoria" Nullable="true" MaxLength="100" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1119,6 +1172,24 @@ warning 6002: The table/view 'BTecuapachoProgramacionNCapas.dbo.UsuarioGetAllVie
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="ProductoAdd" FunctionName="BTecuapachoProgramacionNCapasModel.Store.ProductoAdd" />
+          <FunctionImportMapping FunctionImportName="ProductoDelete" FunctionName="BTecuapachoProgramacionNCapasModel.Store.ProductoDelete" />
+          <FunctionImportMapping FunctionImportName="ProductoGetById" FunctionName="BTecuapachoProgramacionNCapasModel.Store.ProductoGetById">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="BTecuapachoProgramacionNCapasModel.ProductoGetById_Result">
+                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
+                <ScalarProperty Name="NombreProducto" ColumnName="NombreProducto" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="Precio" ColumnName="Precio" />
+                <ScalarProperty Name="Imagen" ColumnName="Imagen" />
+                <ScalarProperty Name="IdSubCategoria" ColumnName="IdSubCategoria" />
+                <ScalarProperty Name="NombreSubCategoria" ColumnName="NombreSubCategoria" />
+                <ScalarProperty Name="IdCategoria" ColumnName="IdCategoria" />
+                <ScalarProperty Name="NombreCategoria" ColumnName="NombreCategoria" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="ProductoUpdate" FunctionName="BTecuapachoProgramacionNCapasModel.Store.ProductoUpdate" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

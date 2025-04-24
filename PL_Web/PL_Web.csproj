@@ -371,6 +371,7 @@
     <Content Include="Scripts\ConfirmAlert.js" />
     <Content Include="Scripts\Espesifics\CRUDJs\CRUDJs.js" />
     <Content Include="Scripts\Espesifics\notificationToast.js" />
+    <Content Include="Scripts\Espesifics\Producto\ProductoForm.js" />
     <Content Include="Scripts\Espesifics\SweetAlertManager.js" />
     <Content Include="Scripts\Espesifics\Usuario\UsuarioForm.js" />
     <Content Include="Scripts\Espesifics\Usuario\UsuarioGetAll.js" />
@@ -427,6 +428,8 @@
     <Content Include="Views\CRUDJs\GetAll.cshtml" />
     <Content Include="Views\Alumno\GetAll.cshtml" />
     <Content Include="Views\Producto\GetAll.cshtml" />
+    <Content Include="Views\Producto\Form.cshtml" />
+    <Content Include="Views\Producto\_MessageNotification.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
