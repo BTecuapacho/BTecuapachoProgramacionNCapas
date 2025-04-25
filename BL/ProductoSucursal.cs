@@ -62,5 +62,21 @@ namespace BL
             }
             return result;
         }
+
+        public static ML.Result UpdateStock(int stock)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using(DL_EF.BTecuapachoProgramacionNCapasEntities context = new DL_EF.BTecuapachoProgramacionNCapasEntities())
+                {
+
+                }
+            }catch(Exception ex)
+            {
+                result.Correct = false; result.Exception = ex; result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
     }
 }
