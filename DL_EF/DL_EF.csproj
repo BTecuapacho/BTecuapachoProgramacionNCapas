@@ -99,6 +99,9 @@
     <Compile Include="ProductoGetById_Result.cs">
       <DependentUpon>BTecuapachoProgramacionNCapas.tt</DependentUpon>
     </Compile>
+    <Compile Include="ProductoSucursal.cs">
+      <DependentUpon>BTecuapachoProgramacionNCapas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rol.cs">
       <DependentUpon>BTecuapachoProgramacionNCapas.tt</DependentUpon>
@@ -110,6 +113,9 @@
       <DependentUpon>BTecuapachoProgramacionNCapas.tt</DependentUpon>
     </Compile>
     <Compile Include="SubCategoria.cs">
+      <DependentUpon>BTecuapachoProgramacionNCapas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Sucursal.cs">
       <DependentUpon>BTecuapachoProgramacionNCapas.tt</DependentUpon>
     </Compile>
     <Compile Include="Usuario.cs">

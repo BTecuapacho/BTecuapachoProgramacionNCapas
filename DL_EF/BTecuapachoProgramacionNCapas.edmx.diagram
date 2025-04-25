@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="2396eba0082449f090aef8f5bfedc83e" Name="Diagram1" ZoomLevel="59">
+      <Diagram DiagramId="2396eba0082449f090aef8f5bfedc83e" Name="Diagram1" ZoomLevel="67">
         <EntityTypeShape EntityType="BTecuapachoProgramacionNCapasModel.Categoria" Width="1.5" PointX="5.75" PointY="6.375" />
         <EntityTypeShape EntityType="BTecuapachoProgramacionNCapasModel.Colonia" Width="1.5" PointX="3" PointY="7.125" />
         <EntityTypeShape EntityType="BTecuapachoProgramacionNCapasModel.Direccion" Width="1.5" PointX="5.25" PointY="1.875" />
@@ -22,7 +22,11 @@
         <AssociationConnector Association="BTecuapachoProgramacionNCapasModel.FK__Municipio__IdEst__2D27B809" />
         <AssociationConnector Association="BTecuapachoProgramacionNCapasModel.FK__Producto__IdSubC__619B8048" />
         <AssociationConnector Association="BTecuapachoProgramacionNCapasModel.FK__Usuario__IdRol__239E4DCF" />
-      </Diagram>
+        <EntityTypeShape EntityType="BTecuapachoProgramacionNCapasModel.ProductoSucursal" Width="1.5" PointX="12.5" PointY="6.25" />
+        <EntityTypeShape EntityType="BTecuapachoProgramacionNCapasModel.Sucursal" Width="1.5" PointX="10.25" PointY="2.25" />
+        <AssociationConnector Association="BTecuapachoProgramacionNCapasModel.FK__ProductoS__IdPro__04E4BC85" />
+        <AssociationConnector Association="BTecuapachoProgramacionNCapasModel.FK__ProductoS__IdSuc__05D8E0BE" />
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

@@ -12,22 +12,19 @@ namespace DL_EF
     using System;
     using System.Collections.Generic;
     
-    public partial class Producto
+    public partial class Sucursal
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Producto()
+        public Sucursal()
         {
             this.ProductoSucursals = new HashSet<ProductoSucursal>();
         }
     
-        public int IdProducto { get; set; }
+        public int IdSucursal { get; set; }
         public string Nombre { get; set; }
-        public string Descripcion { get; set; }
-        public decimal Precio { get; set; }
-        public byte[] Imagen { get; set; }
-        public int IdSubCategoria { get; set; }
+        public string Latitud { get; set; }
+        public string Longitud { get; set; }
     
-        public virtual SubCategoria SubCategoria { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProductoSucursal> ProductoSucursals { get; set; }
     }

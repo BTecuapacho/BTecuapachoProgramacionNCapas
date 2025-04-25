@@ -1,0 +1,117 @@
+﻿@model ML.ProductoSucursal
+@{
+    ViewBag.Title = "GetAll";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card p-4 shadow">
+            @using (Html.BeginForm("GetAll", "ProductoStock", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+            {
+                <div class="row">
+                    <div class="col-md-6">
+                        @Html.DropDownListFor(model => model.Sucursal.IdSucursal, new SelectList(Model.Sucursal.Sucursales, "IdSucursal", "Nombre"), "Seleccione una Sucursal", new { @class = "form-select", @id = "ddlSucursal" })
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <button type="submit" class="rounded-pill btn btn-primary">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-6 text-start">
+            <h2>Productos</h2>
+        </div>
+        <!--<div class="col-6 text-end" id="actionButtons">-->
+            @*<a href="@Url.Action("Form", "Producto")" class="btn btn-primary">*@
+                @*<i class="bi bi-plus-square-fill"></i>*@
+                <!--<i class="bi bi-plus-circle-fill"></i>-->
+                @*<strong>Nuevo producto</strong>*@
+            <!--</a>
+        </div>-->
+    </div>
+    <div class="row">
+        @if (Model.ProductosSucursales.Count != 0)
+        {
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="border-bottom title-part-padding">
+                        <h4 class="card-title my-2 text-center">Lista de procutos</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="usuarios" class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" scope="col">#</th>
+                                        <th class="text-center" scope="col">Producto</th>
+                                        <th class="text-center" scope="col">Sucursal</th>
+                                        <th class="text-center" scope="col">Stock</th>
+                                        <th class="text-center" scope="col">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int count = 0;
+                                    }
+                                    @foreach (ML.ProductoSucursal productoSucursal in Model.ProductosSucursales)
+                                    {
+                                        string src = productoSucursal.Producto.ImagenBase64 != "" && productoSucursal.Producto.ImagenBase64 != null ? "data:image/png;base64," + productoSucursal.Producto.ImagenBase64 : "/content/imagenes/SinIngredientes.png";
+
+                                        count++;
+                                        <tr>
+                                            <td class="text-center">
+                                                @count
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="text-center mb-1">
+                                                    <img style="width: 15%; filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.61)); " alt="Imagen @productoSucursal.Producto.Nombre" src="@src" class="me-1 rounded-2 " />
+                                                    @productoSucursal.Producto.Nombre
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <i class="bi bi-buildings"></i>
+                                                @productoSucursal.Sucursal.Nombre
+                                            </td>
+                                            <td class="text-center">
+                                                <i class="bi bi-boxes"></i>
+                                                @productoSucursal.Stock
+                                            </td>
+                                            <td class="text-center">
+                                                <div style="display: none">
+                                                </div>
+                                                <button id="@productoSucursal.IdProductoSucursal" name="editStok" class="rounded-circle btn btn-warning d-inline-flex align-items-center justify-content-center text-light m-1" onclick="GetById(this)">
+                                                    <i class="bi bi-pen-fill"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="col-md-12">
+                <div class="card p-5 border shadow-lg">
+                    <div class="text-center">
+                        <h2 class="fw-bold">No se encontró ningun producto, haga una busqueda</h2>
+                        <img src="~/Content/imagenes/BuscarProductos.png" alt="SinProsuctos" class="avatar-img m-5" width="25%" id="img">
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@Scripts.Render("~/bundles/jquery")
+<script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>

@@ -37,6 +37,8 @@ namespace DL_EF
         public virtual DbSet<SubCategoria> SubCategorias { get; set; }
         public virtual DbSet<Usuario> Usuarios { get; set; }
         public virtual DbSet<UsuarioGetAllView> UsuarioGetAllViews { get; set; }
+        public virtual DbSet<ProductoSucursal> ProductoSucursals { get; set; }
+        public virtual DbSet<Sucursal> Sucursals { get; set; }
     
         public virtual ObjectResult<Nullable<int>> UsuarioExist(Nullable<int> idUsuario)
         {

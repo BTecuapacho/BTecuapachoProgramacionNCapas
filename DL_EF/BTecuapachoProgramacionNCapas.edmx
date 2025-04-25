@@ -58,6 +58,15 @@
           <Property Name="Imagen" Type="varbinary(max)" />
           <Property Name="IdSubCategoria" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="ProductoSucursal">
+          <Key>
+            <PropertyRef Name="IdProductoSucursal" />
+          </Key>
+          <Property Name="IdProductoSucursal" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdProducto" Type="int" Nullable="false" />
+          <Property Name="IdSucursal" Type="int" Nullable="false" />
+          <Property Name="Stock" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="Rol">
           <Key>
             <PropertyRef Name="IdRol" />
@@ -72,6 +81,15 @@
           <Property Name="IdSubCategoria" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Nombre" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="IdCategoria" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Sucursal">
+          <Key>
+            <PropertyRef Name="IdSucursal" />
+          </Key>
+          <Property Name="IdSucursal" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Latitud" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Longitud" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="Usuario">
           <Key>
@@ -190,6 +208,30 @@ warning 6002: The table/view 'BTecuapachoProgramacionNCapas.dbo.UsuarioGetAllVie
             </Principal>
             <Dependent Role="Producto">
               <PropertyRef Name="IdSubCategoria" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ProductoS__IdPro__04E4BC85">
+          <End Role="Producto" Type="Self.Producto" Multiplicity="1" />
+          <End Role="ProductoSucursal" Type="Self.ProductoSucursal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Producto">
+              <PropertyRef Name="IdProducto" />
+            </Principal>
+            <Dependent Role="ProductoSucursal">
+              <PropertyRef Name="IdProducto" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ProductoS__IdSuc__05D8E0BE">
+          <End Role="Sucursal" Type="Self.Sucursal" Multiplicity="1" />
+          <End Role="ProductoSucursal" Type="Self.ProductoSucursal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sucursal">
+              <PropertyRef Name="IdSucursal" />
+            </Principal>
+            <Dependent Role="ProductoSucursal">
+              <PropertyRef Name="IdSucursal" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -337,8 +379,10 @@ warning 6002: The table/view 'BTecuapachoProgramacionNCapas.dbo.UsuarioGetAllVie
           <EntitySet Name="Estado" EntityType="Self.Estado" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Municipio" EntityType="Self.Municipio" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Producto" EntityType="Self.Producto" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProductoSucursal" EntityType="Self.ProductoSucursal" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Rol" EntityType="Self.Rol" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubCategoria" EntityType="Self.SubCategoria" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Sucursal" EntityType="Self.Sucursal" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Usuario" EntityType="Self.Usuario" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UsuarioGetAllView" EntityType="Self.UsuarioGetAllView" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
@@ -386,6 +430,14 @@ warning 6002: The table/view 'BTecuapachoProgramacionNCapas.dbo.UsuarioGetAllVie
           <AssociationSet Name="FK__Producto__IdSubC__619B8048" Association="Self.FK__Producto__IdSubC__619B8048">
             <End Role="SubCategoria" EntitySet="SubCategoria" />
             <End Role="Producto" EntitySet="Producto" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ProductoS__IdPro__04E4BC85" Association="Self.FK__ProductoS__IdPro__04E4BC85">
+            <End Role="Producto" EntitySet="Producto" />
+            <End Role="ProductoSucursal" EntitySet="ProductoSucursal" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ProductoS__IdSuc__05D8E0BE" Association="Self.FK__ProductoS__IdSuc__05D8E0BE">
+            <End Role="Sucursal" EntitySet="Sucursal" />
+            <End Role="ProductoSucursal" EntitySet="ProductoSucursal" />
           </AssociationSet>
           <AssociationSet Name="FK__SubCatego__IdCat__5EBF139D" Association="Self.FK__SubCatego__IdCat__5EBF139D">
             <End Role="Categoria" EntitySet="Categoria" />
@@ -539,10 +591,10 @@ warning 6002: The table/view 'BTecuapachoProgramacionNCapas.dbo.UsuarioGetAllVie
             <Parameter Name="Imagen" Mode="In" Type="Binary" />
           </FunctionImport>
           <FunctionImport Name="ProductoDelete">
-            <Parameter Name="IdProducto" Mode="In" Type="Int32" />
+          <Parameter Name="IdProducto" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="ProductoGetById" ReturnType="Collection(BTecuapachoProgramacionNCapasModel.ProductoGetById_Result)">
-            <Parameter Name="IdProducto" Mode="In" Type="Int32" />
+          <Parameter Name="IdProducto" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="ProductoUpdate">
             <Parameter Name="IdProducto" Mode="In" Type="Int32" />
@@ -552,7 +604,17 @@ warning 6002: The table/view 'BTecuapachoProgramacionNCapas.dbo.UsuarioGetAllVie
             <Parameter Name="IdSubCategoria" Mode="In" Type="Int32" />
             <Parameter Name="Imagen" Mode="In" Type="Binary" />
           </FunctionImport>
-        </EntityContainer>
+          <EntitySet Name="ProductoSucursals" EntityType="BTecuapachoProgramacionNCapasModel.ProductoSucursal" />
+          <EntitySet Name="Sucursals" EntityType="BTecuapachoProgramacionNCapasModel.Sucursal" />
+          <AssociationSet Name="FK__ProductoS__IdPro__04E4BC85" Association="BTecuapachoProgramacionNCapasModel.FK__ProductoS__IdPro__04E4BC85">
+            <End Role="Producto" EntitySet="Productoes" />
+            <End Role="ProductoSucursal" EntitySet="ProductoSucursals" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ProductoS__IdSuc__05D8E0BE" Association="BTecuapachoProgramacionNCapasModel.FK__ProductoS__IdSuc__05D8E0BE">
+            <End Role="Sucursal" EntitySet="Sucursals" />
+            <End Role="ProductoSucursal" EntitySet="ProductoSucursals" />
+          </AssociationSet>
+          </EntityContainer>
         <ComplexType Name="RolGetAll_Result">
           <Property Type="Int32" Name="IdRol" Nullable="false" />
           <Property Type="String" Name="Nombre" Nullable="false" MaxLength="50" />
@@ -707,6 +769,7 @@ warning 6002: The table/view 'BTecuapachoProgramacionNCapas.dbo.UsuarioGetAllVie
           <Property Name="Imagen" Type="Binary" MaxLength="Max" FixedLength="false" />
           <Property Name="IdSubCategoria" Type="Int32" Nullable="false" />
           <NavigationProperty Name="SubCategoria" Relationship="BTecuapachoProgramacionNCapasModel.FK__Producto__IdSubC__619B8048" FromRole="Producto" ToRole="SubCategoria" />
+          <NavigationProperty Name="ProductoSucursals" Relationship="BTecuapachoProgramacionNCapasModel.FK__ProductoS__IdPro__04E4BC85" FromRole="Producto" ToRole="ProductoSucursal" />
         </EntityType>
         <EntityType Name="Rol">
           <Key>
@@ -892,7 +955,52 @@ warning 6002: The table/view 'BTecuapachoProgramacionNCapas.dbo.UsuarioGetAllVie
           <Property Type="Int32" Name="IdCategoria" Nullable="true" />
           <Property Type="String" Name="NombreCategoria" Nullable="true" MaxLength="100" />
         </ComplexType>
-      </Schema>
+        <EntityType Name="ProductoSucursal">
+          <Key>
+            <PropertyRef Name="IdProductoSucursal" />
+          </Key>
+          <Property Name="IdProductoSucursal" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdProducto" Type="Int32" Nullable="false" />
+          <Property Name="IdSucursal" Type="Int32" Nullable="false" />
+          <Property Name="Stock" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Producto" Relationship="BTecuapachoProgramacionNCapasModel.FK__ProductoS__IdPro__04E4BC85" FromRole="ProductoSucursal" ToRole="Producto" />
+          <NavigationProperty Name="Sucursal" Relationship="BTecuapachoProgramacionNCapasModel.FK__ProductoS__IdSuc__05D8E0BE" FromRole="ProductoSucursal" ToRole="Sucursal" />
+        </EntityType>
+        <EntityType Name="Sucursal">
+          <Key>
+            <PropertyRef Name="IdSucursal" />
+          </Key>
+          <Property Name="IdSucursal" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Latitud" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Longitud" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="ProductoSucursals" Relationship="BTecuapachoProgramacionNCapasModel.FK__ProductoS__IdSuc__05D8E0BE" FromRole="Sucursal" ToRole="ProductoSucursal" />
+        </EntityType>
+        <Association Name="FK__ProductoS__IdPro__04E4BC85">
+          <End Type="BTecuapachoProgramacionNCapasModel.Producto" Role="Producto" Multiplicity="1" />
+          <End Type="BTecuapachoProgramacionNCapasModel.ProductoSucursal" Role="ProductoSucursal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Producto">
+              <PropertyRef Name="IdProducto" />
+            </Principal>
+            <Dependent Role="ProductoSucursal">
+              <PropertyRef Name="IdProducto" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ProductoS__IdSuc__05D8E0BE">
+          <End Type="BTecuapachoProgramacionNCapasModel.Sucursal" Role="Sucursal" Multiplicity="1" />
+          <End Type="BTecuapachoProgramacionNCapasModel.ProductoSucursal" Role="ProductoSucursal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Sucursal">
+              <PropertyRef Name="IdSucursal" />
+            </Principal>
+            <Dependent Role="ProductoSucursal">
+              <PropertyRef Name="IdSucursal" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -1190,6 +1298,26 @@ warning 6002: The table/view 'BTecuapachoProgramacionNCapas.dbo.UsuarioGetAllVie
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="ProductoUpdate" FunctionName="BTecuapachoProgramacionNCapasModel.Store.ProductoUpdate" />
+          <EntitySetMapping Name="ProductoSucursals">
+            <EntityTypeMapping TypeName="BTecuapachoProgramacionNCapasModel.ProductoSucursal">
+              <MappingFragment StoreEntitySet="ProductoSucursal">
+                <ScalarProperty Name="Stock" ColumnName="Stock" />
+                <ScalarProperty Name="IdSucursal" ColumnName="IdSucursal" />
+                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
+                <ScalarProperty Name="IdProductoSucursal" ColumnName="IdProductoSucursal" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Sucursals">
+            <EntityTypeMapping TypeName="BTecuapachoProgramacionNCapasModel.Sucursal">
+              <MappingFragment StoreEntitySet="Sucursal">
+                <ScalarProperty Name="Longitud" ColumnName="Longitud" />
+                <ScalarProperty Name="Latitud" ColumnName="Latitud" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="IdSucursal" ColumnName="IdSucursal" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
