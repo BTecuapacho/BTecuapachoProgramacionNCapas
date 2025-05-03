@@ -63,14 +63,33 @@ namespace BL
             return result;
         }
 
-        public static ML.Result UpdateStock(int stock)
+        public static ML.Result UpdateStock(ML.ProductoSucursal productoSucursal)
         {
             ML.Result result = new ML.Result();
             try
             {
                 using(DL_EF.BTecuapachoProgramacionNCapasEntities context = new DL_EF.BTecuapachoProgramacionNCapasEntities())
                 {
-
+                    var dbProductoSucursal = (from ProductoSucursal in context.ProductoSucursals
+                                              where ProductoSucursal.IdProductoSucursal == productoSucursal.IdProductoSucursal
+                                              select ProductoSucursal).Single();
+                    if (dbProductoSucursal != null)
+                    {
+                        dbProductoSucursal.Stock = productoSucursal.Stock;
+                        int filasAfectadas = context.SaveChanges();
+                        if(filasAfectadas > 0)
+                        {
+                            result.Correct = true;
+                        }
+                        else
+                        {
+                            result.Correct = false; result.ErrorMessage = "Error al actualizar el stoc del producto";
+                        }
+                    }
+                    else
+                    {
+                        result.Correct = false; result.ErrorMessage = "Producto no encontrado";
+                    }
                 }
             }catch(Exception ex)
             {

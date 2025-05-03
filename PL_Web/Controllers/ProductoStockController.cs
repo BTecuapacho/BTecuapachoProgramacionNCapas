@@ -46,5 +46,11 @@ namespace PL_Web.Controllers
             return View(productoSucursal);
         }
 
+        [HttpGet]
+        public JsonResult GetAllProductos(int IdSucursal)
+        {
+            ML.Result result = BL.ProductoSucursal.GetAll(IdSucursal);
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
     }
 }

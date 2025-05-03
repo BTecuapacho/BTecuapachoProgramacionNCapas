@@ -372,6 +372,7 @@
     <Content Include="Scripts\ConfirmAlert.js" />
     <Content Include="Scripts\Espesifics\CRUDJs\CRUDJs.js" />
     <Content Include="Scripts\Espesifics\notificationToast.js" />
+    <Content Include="Scripts\Espesifics\ProductoStock\ProductoStock.js" />
     <Content Include="Scripts\Espesifics\Producto\ProductoForm.js" />
     <Content Include="Scripts\Espesifics\SweetAlertManager.js" />
     <Content Include="Scripts\Espesifics\Usuario\UsuarioForm.js" />
