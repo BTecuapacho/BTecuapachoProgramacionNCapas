@@ -1,4 +1,5 @@
 ﻿@model ML.Usuario
+@using ReportViewerForMvc;
 @{
     ViewBag.Title = "GetAll";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -7,6 +8,25 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css" />
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.2/css/buttons.dataTables.css" />
+
+@if (ViewBag.ReportViewer != null)
+{
+    <div class="container rounded-4">
+        <div class="row mb-4 p-4 shadow">
+            @Html.ReportViewer(ViewBag.ReportViewer as Microsoft.Reporting.WebForms.ReportViewer)
+        </div>
+    </div>
+}
+else
+{
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card p-4 shadow">
+                No se encontro ningun reporte
+            </div>
+        </div>
+    </div>
+}
 <div class="container mb-4" id="searchPanel" style="display: none">
     <div class="row">
         <div class="col-12">

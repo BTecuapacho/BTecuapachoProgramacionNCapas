@@ -18,6 +18,8 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
 using System.Xml.Linq;
+using Microsoft.Reporting.WebForms;
+
 
 namespace PL_Web.Controllers
 {
@@ -328,6 +330,15 @@ namespace PL_Web.Controllers
                 //Con servicios soap
                 //usuario.Usuarios = result.Objects.ToList();
                 usuario.Usuarios = result.Objects;
+
+                ReportViewer reportViewer = new ReportViewer();
+                reportViewer.ProcessingMode = ProcessingMode.Local;
+                reportViewer.SizeToReportContent = true;
+                reportViewer.Width = Unit.Percentage(900);
+                reportViewer.Height = Unit.Percentage(900);
+                reportViewer.LocalReport.ReportPath = Request.MapPath(Request.ApplicationPath) + @"Reports\ReportUsuario.rdlc";
+                reportViewer.LocalReport.DataSources.Add(new ReportDataSource("DataSetUsuario", result.Objects));
+                ViewBag.ReportViewer = reportViewer;
             }
             else
             {
@@ -351,7 +362,18 @@ namespace PL_Web.Controllers
             ML.Result result = GetAllByREST(usuario);
             if (result.Correct)
             {
-                usuario.Usuarios = result.Objects.ToList();
+                //Con servicios soap
+                //usuario.Usuarios = result.Objects.ToList();
+                usuario.Usuarios = result.Objects;
+
+                ReportViewer reportViewer = new ReportViewer();
+                reportViewer.ProcessingMode = ProcessingMode.Local;
+                reportViewer.SizeToReportContent = true;
+                reportViewer.Width = Unit.Percentage(900);
+                reportViewer.Height = Unit.Percentage(900);
+                reportViewer.LocalReport.ReportPath = Request.MapPath(Request.ApplicationPath) + @"Reports\ReportUsuario.rdlc";
+                reportViewer.LocalReport.DataSources.Add(new ReportDataSource("DataSetUsuario", result.Objects));
+                ViewBag.ReportViewer = reportViewer;
             }
             else
             {
