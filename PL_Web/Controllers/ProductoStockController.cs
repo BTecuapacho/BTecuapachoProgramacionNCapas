@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -51,6 +52,26 @@ namespace PL_Web.Controllers
         {
             ML.Result result = BL.ProductoSucursal.GetAll(IdSucursal);
             return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public ActionResult SendMail()
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                string correo = ConfigurationManager.AppSettings["CorreoSMTP"].ToString();
+                string password = ConfigurationManager.AppSettings["PassworSMTP"].ToString();
+                int puerto = Convert.ToInt32(ConfigurationManager.AppSettings["PuertoSMTP"].ToString());
+                bool defaultCredentials = Convert.ToBoolean(ConfigurationManager.AppSettings["DefaultCredentialsSMTP"].ToString());
+                bool isHtmlBody = Convert.ToBoolean(ConfigurationManager.AppSettings["IsHtmlBodySMTP"].ToString());
+            }
+            catch (Exception ex) { 
+            
+            }
+            ViewBag.succesMessage = "El se envio de manera correcta manera correcta";
+            ViewBag.result = result;
+            return PartialView("_MessageNotification");
         }
     }
 }

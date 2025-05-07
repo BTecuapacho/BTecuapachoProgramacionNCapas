@@ -677,7 +677,7 @@
                   <ChartDataPoints>
                     <ChartDataPoint>
                       <ChartDataPointValues>
-                        <Y>=CountDistinct(Fields!IdRol.Value)</Y>
+                        <Y>=Count(Fields!IdRol.Value)</Y>
                       </ChartDataPointValues>
                       <ChartDataLabel>
                         <Style />
