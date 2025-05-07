@@ -374,6 +374,16 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="Content\imagenes\advertencia.png" />
+    <Content Include="Content\imagenes\advertenciaDelete.png" />
+    <Content Include="Content\imagenes\BuscarProductos.png" />
+    <Content Include="Content\imagenes\noProducto.png" />
+    <Content Include="Content\imagenes\SinIngredientes.png" />
+    <Content Include="Content\imagenes\sinProducto.png" />
+    <Content Include="Content\imagenes\usuarioFemenino.png" />
+    <Content Include="Content\imagenes\usuarioMasculino.png" />
+    <Content Include="Content\imagenes\verificado.png" />
+    <Content Include="Content\imagenes\xlsx.png" />
     <Content Include="Content\loader.css" />
     <Content Include="Content\myFonts.css" />
     <Content Include="favicon.ico" />
@@ -495,7 +505,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Content\imagenes\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
