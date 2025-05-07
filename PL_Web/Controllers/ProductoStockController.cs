@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
+using System.ServiceModel.Configuration;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml;
@@ -65,11 +69,45 @@ namespace PL_Web.Controllers
                 int puerto = Convert.ToInt32(ConfigurationManager.AppSettings["PuertoSMTP"].ToString());
                 bool defaultCredentials = Convert.ToBoolean(ConfigurationManager.AppSettings["DefaultCredentialsSMTP"].ToString());
                 bool isHtmlBody = Convert.ToBoolean(ConfigurationManager.AppSettings["IsHtmlBodySMTP"].ToString());
+                string Asunto = "Asunto";
+
+                string body = "";
+                string path = Server.MapPath("~/Content /PlantillaEmail/Email.html");
+                StreamReader reader = new StreamReader(path);
+                body = reader.ReadToEnd();
+
+                body.Replace("{{destinatario}}", "Jorge Guevara Flores");
+                body.Replace("{{nombreUsuario}}", "Jorge Guevara Flores");
+                body.Replace("{{Titulo}}", "Test Envio");
+                body.Replace("{{cuerpoCorreo}}", "Prueva para verificar el funcionamiento del correo.");
+
+                //Remplazo de valores,
+
+                var SMTPClient = new SmtpClient
+                {
+                    Port = puerto,
+                    UseDefaultCredentials = defaultCredentials,
+                    Credentials = new NetworkCredential(correo, password),
+                    EnableSsl = true
+                };
+
+                var mensaje = new MailMessage
+                {
+                    From = new MailAddress(correo, "Benja"),
+                    Subject = Asunto,
+                    Body = body,
+                    IsBodyHtml = isHtmlBody,
+                };
+                //mensaje.To.Add("jguevaraflores3@gmail.com");
+                mensaje.To.Add("bemjamintexis@gmail.com");
+                SMTPClient.Send(mensaje);
+
+                result.Correct = true;
             }
             catch (Exception ex) { 
-            
+                result.Correct = false; result.Exception = ex; result.ErrorMessage = ex.Message;
             }
-            ViewBag.succesMessage = "El se envio de manera correcta manera correcta";
+            ViewBag.succesMessage = "El correo se envio de manera correcta";
             ViewBag.result = result;
             return PartialView("_MessageNotification");
         }

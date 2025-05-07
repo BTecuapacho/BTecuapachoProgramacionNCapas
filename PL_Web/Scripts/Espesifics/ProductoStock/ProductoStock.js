@@ -1,4 +1,6 @@
-﻿function GetAll() {
+﻿var estatusEditarEstock = true
+
+function GetAll() {
     var idSucursal = $('#ddlSucursal').val()
     if (idSucursal && idSucursal > 0) {
         $('#tbodyProductoSucursal').empty()
@@ -54,14 +56,17 @@ function DrawRow(productoSucursal) {
                     ${productoSucursal.Stock}
                 </td>
                 <td class="text-center">
-                    <div class="text-center buttonsEdit-${productoSucursal.IdProductoSucursal}" d-block">
+                    <div class="text-center buttonEdit-${productoSucursal.IdProductoSucursal}" d-block">
                         <button id="${productoSucursal.IdProductoSucursal}" name="editStock" class="rounded-circle btn btn-warning d-inline-flex align-items-center justify-content-center text-light m-1" onclick="GetStock(this)">
                             <i class="bi bi-pen-fill"></i>
                         </button>
                     </div>
-                    <div class="text-center buttonsActinos d-block">
-                        <button id="${productoSucursal.IdProductoSucursal}" name="editSto" class="rounded-circle btn btn-primary d-inline-flex align-items-center justify-content-center text-light m-1" onclick="GetStock(this)">
-                            <i class="bi bi-pen-fill"></i>
+                    <div class="text-center buttonsActinos-${productoSucursal.IdProductoSucursal} d-none">
+                        <button name="cancelEditStok" class="rounded-circle btn btn-primary d-inline-flex align-items-center justify-content-center text-light m-1" onclick="">
+                            <i class="bi bi-floppy2-fill"></i>
+                        </button>
+                        <button id="${productoSucursal.IdProductoSucursal}" class="rounded-circle btn btn-danger d-inline-flex align-items-center justify-content-center" onclick="CancelEdit(this)">
+                            <i class="bi bi-x-square-fill"></i>
                         </button>
                     </div>
                 </td>
@@ -109,20 +114,61 @@ function SinResultados() {
 
 function GetStock(input) {
     //console.log(input.id)
-    let idProductoSucursal = input.id
-    let tdStock = $(`#editarStock-${input.id}`)[0]
-    let stock = tdStock.innerText.trim()
-    console.log(stock)
-    //tdStock.innerHTML = ''
-    OcultarBotonesEdit(idProductoSucursal)
+    if (estatusEditarEstock) {
+        estatusEditarEstock = false
+        let idProductoSucursal = input.id
+        let tdStock = $(`#editarStock-${input.id}`)[0]
+        let stock = tdStock.innerText.trim()
+        console.log(stock)
+        //tdStock.innerHTML = ''
+        ToggleBotonesEdit(idProductoSucursal, false)
+        ToggleBotonesSaveCancel(idProductoSucursal, true)
+    }
 }
 
-function OcultarBotonesEdit(idProductoSucursal) {
-    let divButttonsEdit = $(`.buttonsEdit-${idProductoSucursal}`)
-    divButttonsEdit.removeClass('d-block');
-    divButttonsEdit.addClass('d-none');
-    let botones = $('[name="editStok"]');
+//El parametro toggle lo utilizo para saver si tengo que mostrar u ocultar el div
+// True es Mostrar, False el Ocultar
+function ToggleBotonesEdit(idProductoSucursal, toggle) {
+    let divButttonsEdit = $(`.buttonEdit-${idProductoSucursal}`)
+    if (toggle) {
+        divButttonsEdit.removeClass('d-none');
+        divButttonsEdit.removeClass('d-block');
+        divButttonsEdit.addClass('d-block');
+
+    } else {
+        divButttonsEdit.removeClass('d-none');
+        divButttonsEdit.removeClass('d-block');
+        divButttonsEdit.addClass('d-none');
+    }
+    //let botones = $('[name="editStok"]');
     //$.each(botones, function (i, boton) {
     //    console.log(boton)
     //})
+}
+
+//El parametro toggle lo utilizo para saver si tengo que mostrar u ocultar el div
+// True es Mostrar, False el Ocultar
+function ToggleBotonesSaveCancel(idProductoSucursal, toggle) {
+    let divButttonsEdit = $(`.buttonsActinos-${idProductoSucursal}`)
+    if (toggle) {
+        divButttonsEdit.removeClass('d-none');
+        divButttonsEdit.removeClass('d-block');
+        divButttonsEdit.addClass('d-block');
+    } else {
+        divButttonsEdit.removeClass('d-none');
+        divButttonsEdit.removeClass('d-block');
+        divButttonsEdit.addClass('d-none');
+    }
+    //let botones = $('[name="editStok"]');
+    //$.each(botones, function (i, boton) {
+    //    console.log(boton)
+    //})
+}
+
+
+function CancelEdit(input) {
+    let idProductoSucursal = input.id
+    estatusEditarEstock = true
+    ToggleBotonesEdit(idProductoSucursal, true)
+    ToggleBotonesSaveCancel(idProductoSucursal, false)
 }
