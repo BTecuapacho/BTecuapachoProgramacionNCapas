@@ -377,6 +377,7 @@
     <Content Include="Content\imagenes\advertencia.png" />
     <Content Include="Content\imagenes\advertenciaDelete.png" />
     <Content Include="Content\imagenes\BuscarProductos.png" />
+    <Content Include="Content\imagenes\gmail.png" />
     <Content Include="Content\imagenes\noProducto.png" />
     <Content Include="Content\imagenes\SinIngredientes.png" />
     <Content Include="Content\imagenes\sinProducto.png" />
@@ -502,6 +503,7 @@
     <Content Include="Views\Producto\Form.cshtml" />
     <Content Include="Views\Producto\_MessageNotification.cshtml" />
     <Content Include="Views\ProductoStock\GetAll.cshtml" />
+    <Content Include="Views\ProductoStock\_MessageNotification.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

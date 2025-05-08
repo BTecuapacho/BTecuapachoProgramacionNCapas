@@ -72,24 +72,26 @@ namespace PL_Web.Controllers
                 string Asunto = "Asunto";
 
                 string body = "";
-                string path = Server.MapPath("~/Content /PlantillaEmail/Email.html");
+                string path = Server.MapPath("~/Content/PlantillaEmail/Email.html");
+                string pathImagen = Server.MapPath("~/Content/imagenes/gmail.png");
                 StreamReader reader = new StreamReader(path);
                 body = reader.ReadToEnd();
 
-                body.Replace("{{destinatario}}", "Jorge Guevara Flores");
-                body.Replace("{{nombreUsuario}}", "Jorge Guevara Flores");
-                body.Replace("{{Titulo}}", "Test Envio");
-                body.Replace("{{cuerpoCorreo}}", "Prueva para verificar el funcionamiento del correo.");
+                body = body.Replace("{{destinatario}}", "Jorge Guevara Flores");
+                body = body.Replace("{{nombreUsuario}}", "Jorge Guevara Flores");
+                //body = body.Replace("{{destinatario}}", "Benjamin Tecuapacho");
+                //body = body.Replace("{{nombreUsuario}}", "Benjamin Tecuapacho Mendez");
+                body = body.Replace("{{Titulo}}", "Test Envio");
+                body = body.Replace("{{cuerpoCorreo}}", "Prueva para verificar el funcionamiento del correo.");
 
-                //Remplazo de valores,
-
-                var SMTPClient = new SmtpClient
+                var SMTPClient = new SmtpClient("smtp.gmail.com")
                 {
                     Port = puerto,
                     UseDefaultCredentials = defaultCredentials,
                     Credentials = new NetworkCredential(correo, password),
                     EnableSsl = true
                 };
+
 
                 var mensaje = new MailMessage
                 {
@@ -98,8 +100,16 @@ namespace PL_Web.Controllers
                     Body = body,
                     IsBodyHtml = isHtmlBody,
                 };
-                //mensaje.To.Add("jguevaraflores3@gmail.com");
-                mensaje.To.Add("bemjamintexis@gmail.com");
+
+                AlternateView htmlView = AlternateView.CreateAlternateViewFromString(body, null, "text/html");
+                LinkedResource imagen = new LinkedResource(pathImagen)
+                {
+                    ContentId = "imagen",
+                    ContentType = new System.Net.Mime.ContentType("image/jpeg")
+                };
+                htmlView.LinkedResources.Add(imagen);
+                mensaje.To.Add("jguevaraflores3@gmail.com");
+                //mensaje.To.Add("2003tecuapacho@gmail.com");
                 SMTPClient.Send(mensaje);
 
                 result.Correct = true;
