@@ -378,6 +378,7 @@
     <Content Include="Content\imagenes\advertenciaDelete.png" />
     <Content Include="Content\imagenes\BuscarProductos.png" />
     <Content Include="Content\imagenes\gmail.png" />
+    <Content Include="Content\imagenes\logo.png" />
     <Content Include="Content\imagenes\noProducto.png" />
     <Content Include="Content\imagenes\SinIngredientes.png" />
     <Content Include="Content\imagenes\sinProducto.png" />

@@ -63,6 +63,51 @@ namespace BL
             return result;
         }
 
+        public static ML.Result GetById(int IdProductoSucursal)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (DL_EF.BTecuapachoProgramacionNCapasEntities context = new DL_EF.BTecuapachoProgramacionNCapasEntities())
+                {
+                    var dbProductoSucursal = (from ProductoSucursal in context.ProductoSucursals
+                                              join Producto in context.Productoes on ProductoSucursal.IdProducto equals Producto.IdProducto
+                                              join Sucursal in context.Sucursals on ProductoSucursal.IdSucursal equals Sucursal.IdSucursal
+                                              where ProductoSucursal.IdProductoSucursal == IdProductoSucursal
+                                              select new
+                                              {
+                                                  IdProductoSucursal = ProductoSucursal.IdProductoSucursal,
+                                                  NombreProducto = Producto.Nombre,
+                                                  NombreSucursal = Sucursal.Nombre,
+                                                  Stok = ProductoSucursal.Stock
+                                              }).Single();
+                    if(dbProductoSucursal != null)
+                    {
+                        ML.ProductoSucursal productoSucursal = new ML.ProductoSucursal
+                        {
+                            Producto = new ML.Producto(),
+                            Sucursal = new ML.Sucursal()
+                        };
+                        productoSucursal.IdProductoSucursal = Convert.ToInt32(dbProductoSucursal.IdProductoSucursal);
+                        productoSucursal.Producto.Nombre = dbProductoSucursal.NombreProducto;
+                        productoSucursal.Sucursal.Nombre = dbProductoSucursal.NombreSucursal;
+                        productoSucursal.Stock = Convert.ToInt32(dbProductoSucursal.Stok);
+
+                        result.Object = productoSucursal; result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false; result.ErrorMessage = "No se encontro el producto.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false; result.Exception = ex; result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
+
         public static ML.Result UpdateStock(ML.ProductoSucursal productoSucursal)
         {
             ML.Result result = new ML.Result();

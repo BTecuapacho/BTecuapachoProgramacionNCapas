@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Owin.Security;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
@@ -18,37 +19,7 @@ namespace PL_Web.Controllers
         [HttpGet]
         public ActionResult GetAll()
         {
-            ML.ProductoSucursal productoSucursal = new ML.ProductoSucursal
-            {
-                Sucursal = new ML.Sucursal(),
-                Producto = new ML.Producto()
-            };
-            ML.Result resultSucursales = BL.Sucursal.GetAll();
-            productoSucursal.Sucursal.Sucursales = resultSucursales.Objects;
-            productoSucursal.ProductosSucursales = new List<object>();
-            return View(productoSucursal);
-        }
-
-        [HttpPost]
-        public ActionResult GetAll(ML.ProductoSucursal productoSucursalIn)
-        {
-            ML.ProductoSucursal productoSucursal = new ML.ProductoSucursal
-            {
-                Sucursal = new ML.Sucursal(),
-                Producto = new ML.Producto()
-            };
-            ML.Result resultSucursales = BL.Sucursal.GetAll();
-            productoSucursal.Sucursal.Sucursales = resultSucursales.Objects;
-            ML.Result result = BL.ProductoSucursal.GetAll(productoSucursalIn.Sucursal.IdSucursal);
-            if (result.Correct)
-            {
-                productoSucursal.ProductosSucursales = result.Objects;
-            }
-            else
-            {
-                productoSucursal.ProductosSucursales = new List<object>();
-            }
-            return View(productoSucursal);
+            return View();
         }
 
         [HttpGet]
@@ -58,10 +29,9 @@ namespace PL_Web.Controllers
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpGet]
-        public ActionResult SendMail()
+        [NonAction]
+        public void SendMail(int stockAnterior, int stockNuevo, string sucursal, string producto)
         {
-            ML.Result result = new ML.Result();
             try
             {
                 string correo = ConfigurationManager.AppSettings["CorreoSMTP"].ToString();
@@ -69,20 +39,21 @@ namespace PL_Web.Controllers
                 int puerto = Convert.ToInt32(ConfigurationManager.AppSettings["PuertoSMTP"].ToString());
                 bool defaultCredentials = Convert.ToBoolean(ConfigurationManager.AppSettings["DefaultCredentialsSMTP"].ToString());
                 bool isHtmlBody = Convert.ToBoolean(ConfigurationManager.AppSettings["IsHtmlBodySMTP"].ToString());
-                string Asunto = "Asunto";
+                string Asunto = $"Cambios al stock del producto {producto}";
 
                 string body = "";
                 string path = Server.MapPath("~/Content/PlantillaEmail/Email.html");
-                string pathImagen = Server.MapPath("~/Content/imagenes/gmail.png");
+                string pathImagen = Server.MapPath("~/Content/imagenes/logo.png");
                 StreamReader reader = new StreamReader(path);
                 body = reader.ReadToEnd();
 
-                body = body.Replace("{{destinatario}}", "Jorge Guevara Flores");
-                body = body.Replace("{{nombreUsuario}}", "Jorge Guevara Flores");
-                //body = body.Replace("{{destinatario}}", "Benjamin Tecuapacho");
-                //body = body.Replace("{{nombreUsuario}}", "Benjamin Tecuapacho Mendez");
-                body = body.Replace("{{Titulo}}", "Test Envio");
-                body = body.Replace("{{cuerpoCorreo}}", "Prueva para verificar el funcionamiento del correo.");
+                //body = body.Replace("{{destinatario}}", "Jorge Guevara Flores");
+                //body = body.Replace("{{nombreUsuario}}", "Jorge Guevara Flores");
+                body = body.Replace("{{destinatario}}", "Benjamin Tecuapacho");
+                body = body.Replace("{{nombreUsuario}}", "Benjamin Tecuapacho Mendez");
+                body = body.Replace("{{Titulo}}", "Stock");
+                body = body.Replace("{{cuerpoCorreo}}", $"En la sucursar {sucursal} se actualizo el stock de manera correcta del producto {producto}, el stock que tenia anterioremente era de {stockAnterior} unidades y el nuevo stock es de {stockNuevo} unidades");
+                body = body.Replace("{{ruta}}", string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Action("GetAll()", "ProductoStock")));
 
                 var SMTPClient = new SmtpClient("smtp.gmail.com")
                 {
@@ -95,7 +66,7 @@ namespace PL_Web.Controllers
 
                 var mensaje = new MailMessage
                 {
-                    From = new MailAddress(correo, "Benja"),
+                    From = new MailAddress(correo, "Productos Naturales"),
                     Subject = Asunto,
                     Body = body,
                     IsBodyHtml = isHtmlBody,
@@ -105,21 +76,51 @@ namespace PL_Web.Controllers
                 LinkedResource imagen = new LinkedResource(pathImagen)
                 {
                     ContentId = "imagen",
-                    ContentType = new System.Net.Mime.ContentType("image/jpeg")
+                    ContentType = new System.Net.Mime.ContentType("image/png")
                 };
-                htmlView.LinkedResources.Add(imagen);
-                mensaje.To.Add("jguevaraflores3@gmail.com");
-                //mensaje.To.Add("2003tecuapacho@gmail.com");
+                htmlView.LinkedResources.Add(imagen); 
+                mensaje.AlternateViews.Add(htmlView);
+                //mensaje.To.Add("jguevaraflores3@gmail.com");
+                mensaje.To.Add("2003tecuapacho@gmail.com");
                 SMTPClient.Send(mensaje);
-
-                result.Correct = true;
             }
             catch (Exception ex) { 
-                result.Correct = false; result.Exception = ex; result.ErrorMessage = ex.Message;
             }
-            ViewBag.succesMessage = "El correo se envio de manera correcta";
-            ViewBag.result = result;
-            return PartialView("_MessageNotification");
+        }
+
+        [HttpPost]
+        public JsonResult Update(ML.ProductoSucursal productoSucursal)
+        {
+
+
+            ML.ProductoSucursal stockAnterior = new ML.ProductoSucursal
+            {
+                Producto = new ML.Producto(),
+                Sucursal = new ML.Sucursal()
+            };
+            ML.Result resultGetLastStock = BL.ProductoSucursal.GetById(productoSucursal.IdProductoSucursal);
+            if (resultGetLastStock.Correct)
+            {
+                stockAnterior = (ML.ProductoSucursal)resultGetLastStock.Object;
+            }
+
+            ML.Result result = BL.ProductoSucursal.UpdateStock(productoSucursal);
+            if (result.Correct)
+            {
+                /*
+                 El entero que viene en stockAnterior.Stock es el stock anterior,
+                Y lo que vienen en productoSucursal.Stock es el nuevo stock
+                 */
+                SendMail(stockAnterior.Stock, productoSucursal.Stock, stockAnterior.Sucursal.Nombre, stockAnterior.Producto.Nombre);
+            }
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult GetAllSucursales()
+        {
+            ML.Result result = BL.Sucursal.GetAll();
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
     }
 }
