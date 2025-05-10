@@ -91,8 +91,6 @@ namespace PL_Web.Controllers
         [HttpPost]
         public JsonResult Update(ML.ProductoSucursal productoSucursal)
         {
-
-
             ML.ProductoSucursal stockAnterior = new ML.ProductoSucursal
             {
                 Producto = new ML.Producto(),
