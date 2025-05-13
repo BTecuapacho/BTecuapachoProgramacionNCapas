@@ -1,4 +1,5 @@
 ﻿using Microsoft.Owin.Security;
+using ML;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -30,8 +31,9 @@ namespace PL_Web.Controllers
         }
 
         [NonAction]
-        public void SendMail(int stockAnterior, int stockNuevo, string sucursal, string producto)
+        public ML.Result SendMail(int stockAnterior, int stockNuevo, string sucursal, string producto)
         {
+            ML.Result result = new ML.Result(); 
             try
             {
                 string correo = ConfigurationManager.AppSettings["CorreoSMTP"].ToString();
@@ -83,9 +85,12 @@ namespace PL_Web.Controllers
                 //mensaje.To.Add("jguevaraflores3@gmail.com");
                 mensaje.To.Add("2003tecuapacho@gmail.com");
                 SMTPClient.Send(mensaje);
+                result.Correct = true;
             }
             catch (Exception ex) { 
+                result.Correct = false; result.ErrorMessage = ex.Message; result.Exception = ex;
             }
+            return result;
         }
 
         [HttpPost]
@@ -107,17 +112,24 @@ namespace PL_Web.Controllers
             {
                 /*
                  El entero que viene en stockAnterior.Stock es el stock anterior,
-                Y lo que vienen en productoSucursal.Stock es el nuevo stock
+                 Y lo que vienen en productoSucursal.Stock es el nuevo stock
                  */
-                SendMail(stockAnterior.Stock, productoSucursal.Stock, stockAnterior.Sucursal.Nombre, stockAnterior.Producto.Nombre);
+                ML.Result resultEmail = SendMail(stockAnterior.Stock, productoSucursal.Stock, stockAnterior.Sucursal.Nombre, stockAnterior.Producto.Nombre);
             }
+            //var newResult = new
+            //{
+            //    result = {
+            //        Correct = result.Correct
+            //    },
+            //    resultEmail = { },
+            //};
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
         public JsonResult GetAllSucursales()
         {
-            ML.Result result = BL.Sucursal.GetAll();
+            ML.Result result = BL.Sucursal.GetAllDDL();
             return Json(result, JsonRequestBehavior.AllowGet);
         }
     }

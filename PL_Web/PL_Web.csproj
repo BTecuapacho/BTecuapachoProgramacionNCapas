@@ -276,6 +276,7 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ProductoController.cs" />
     <Compile Include="Controllers\ProductoStockController.cs" />
+    <Compile Include="Controllers\SucursalController.cs" />
     <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -379,6 +380,7 @@
     <Content Include="Content\imagenes\BuscarProductos.png" />
     <Content Include="Content\imagenes\gmail.png" />
     <Content Include="Content\imagenes\logo.png" />
+    <Content Include="Content\imagenes\mapas.png" />
     <Content Include="Content\imagenes\noProducto.png" />
     <Content Include="Content\imagenes\SinIngredientes.png" />
     <Content Include="Content\imagenes\sinProducto.png" />
@@ -431,6 +433,7 @@
     <Content Include="Scripts\Espesifics\notificationToast.js" />
     <Content Include="Scripts\Espesifics\ProductoStock\ProductoStock.js" />
     <Content Include="Scripts\Espesifics\Producto\ProductoForm.js" />
+    <Content Include="Scripts\Espesifics\Sucursal\Sucursal.js" />
     <Content Include="Scripts\Espesifics\SweetAlertManager.js" />
     <Content Include="Scripts\Espesifics\Usuario\UsuarioForm.js" />
     <Content Include="Scripts\Espesifics\Usuario\UsuarioGetAll.js" />
@@ -505,6 +508,7 @@
     <Content Include="Views\Producto\_MessageNotification.cshtml" />
     <Content Include="Views\ProductoStock\GetAll.cshtml" />
     <Content Include="Views\ProductoStock\_MessageNotification.cshtml" />
+    <Content Include="Views\Sucursal\GetAll.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
