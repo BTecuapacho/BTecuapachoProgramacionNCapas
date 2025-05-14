@@ -9,8 +9,22 @@ function GetAll() {
         dataType: 'JSON',
         success: function (data) {
             console.log(data)
+            var contenedor = $('#ContenidoSucursal')
             if (data && data.Correct) {
-
+                contenedor.empty()
+                if (data.Objects != 0) {
+                    contenedor.append(CuerpoGetAll())
+                    $.each(data.Objects, function (contador, sucursal) {
+                        sucursal.Contador = contador + 1
+                        DrawRow(sucursal)
+                    })
+                    contenedor.append(CuerpoMapsMarcadores())
+                    initMap(data.Objects);
+                } else {
+                    contenedor.append(SinResultados())
+                }
+            } else {
+                AlertaModal('Error', `Error al obtener los productos: ${data.ErrorMessage}`, ErrorALERT);
             }
         },
         error: function (xhr) {
@@ -21,42 +35,24 @@ function GetAll() {
 
 function DrawRow(sucursal) {
     let tr = `
-    <tr data-id="${productoSucursal.IdProductoSucursal}" data-original-stock="${productoSucursal.Stock}">
-        <td class="text-center">${productoSucursal.Contador}</td>
+    <tr>
         <td class="text-center">
-            <div class="text-center mb-1">
-                <img style="width: 15%; filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.61));" 
-                     alt="Imagen ${productoSucursal.Producto.Nombre}" 
-                     src="${src}" 
-                     class="me-1 rounded-2" />
-                ${productoSucursal.Producto.Nombre}
-            </div>
+            ${sucursal.Contador}
         </td>
         <td class="text-center">
-            <i class="bi bi-buildings"></i> ${productoSucursal.Sucursal.Nombre}
-        </td>
-        <td class="text-center" id="editarStock-${productoSucursal.IdProductoSucursal}">
-            <i class="bi bi-boxes"></i> ${productoSucursal.Stock}
+            ${sucursal.Nombre}
         </td>
         <td class="text-center">
-            <div class="text-center buttonEdit-${productoSucursal.IdProductoSucursal} d-block">
-                <button id="${productoSucursal.IdProductoSucursal}" 
-                        name="editStock" 
-                        class="rounded-circle btn btn-warning d-inline-flex align-items-center justify-content-center text-light m-1" 
-                        onclick="GetStock(this)">
-                    <i class="bi bi-pen-fill"></i>
-                </button>
-            </div>
-            <div class="text-center buttonsActinos-${productoSucursal.IdProductoSucursal} d-none">
-                <button class="rounded-circle btn btn-primary d-inline-flex align-items-center justify-content-center text-light m-1"
-                        onclick="ConfirmUpdateStock(this)">
-                    <i class="bi bi-floppy2-fill"></i>
-                </button>
-                <button class="rounded-circle btn btn-danger d-inline-flex align-items-center justify-content-center"
-                        onclick="CancelEdit(this)">
-                    <i class="bi bi-x-square-fill"></i>
-                </button>
-            </div>
+            <button id="${sucursal.IdSucursal}" name="editStock" 
+                    class="rounded-circle btn btn-warning d-inline-flex align-items-center justify-content-center text-light m-1" 
+                    onclick="GetStock(this)">
+                <i class="bi bi-pen-fill"></i>
+            </button>
+            <button id="${sucursal.IdSucursal}"
+                    class="rounded-circle btn btn-danger d-inline-flex align-items-center justify-content-center"
+                    onclick="CancelEdit(this)">
+                <i class="bi bi-trash3-fill"></i>
+            </button>
         </td>
     </tr>`
     $('#tbodySucursal').append(tr)
@@ -64,7 +60,7 @@ function DrawRow(sucursal) {
 
 function CuerpoGetAll() {
     return `
-    <div class="col-6">
+    <div class="col-md-6 col-sm-12 mb-4">
         <div class="card shadow">
             <div class="border-bottom title-part-padding">
                 <h4 class="card-title my-2 text-center">Lista de sucursales</h4>
@@ -76,7 +72,6 @@ function CuerpoGetAll() {
                             <tr>
                                 <th class="text-center" scope="col">#</th>
                                 <th class="text-center" scope="col">Sucursal</th>
-                                <th class="text-center" scope="col">Altitud y Longitud</th>
                                 <th class="text-center" scope="col">Acciones</th>
                             </tr>
                         </thead>
@@ -90,14 +85,13 @@ function CuerpoGetAll() {
 
 function CuerpoMapsMarcadores() {
     return `
-    <div class="col-6">
+    <div class="col-md-6 col-sm-12 mb-4">
         <div class="card shadow">
             <div class="border-bottom title-part-padding">
                 <h4 class="card-title my-2 text-center">Mapa de sucursales</h4>
             </div>
             <div class="card-body">
-                <div id="sucursalMapa">
-                </div>
+                <div id="sucursalMapa" class="rounded-3 shadow" style="height: 35rem;"></div>
             </div>
         </div>
     </div>`;
@@ -110,8 +104,48 @@ function SinResultados() {
         <div class="card p-5 border shadow-lg">
             <div class="text-center">
                 <h2 class="fw-bold">No se encontró ninguna sucursal</h2>
-                <img src="~/Content/imagenes/mapas.png" alt="SinProsuctos" class="avatar-img m-5" width="25%" id="img">
+                <img src="/Content/imagenes/mapas.png" alt="SinSucursales" class="avatar-img m-5" width="25%" id="img">
             </div>
         </div>
     </div>`;
+}
+
+function initMap(sucursales) {
+    if (!sucursales || sucursales.length === 0) return;
+
+    var bounds = new google.maps.LatLngBounds();
+    var mapOptions = {
+        mapTypeId: 'roadmap'
+    };
+
+    var map = new google.maps.Map(document.getElementById('sucursalMapa'), mapOptions);
+    map.setTilt(50);
+
+    var infoWindow = new google.maps.InfoWindow();
+
+    sucursales.forEach(function (sucursal) {
+        var lat = parseFloat(sucursal.Latitud);
+        var lng = parseFloat(sucursal.Longitud);
+        var position = new google.maps.LatLng(lat, lng);
+        bounds.extend(position);
+
+        var marker = new google.maps.Marker({
+            position: position,
+            map: map,
+            title: sucursal.Nombre
+        });
+
+        var contentString = `
+            <div class="info_content">
+                <h3>${sucursal.Nombre}</h3>
+                <p>Lat: ${sucursal.Latitud}, Lng: ${sucursal.Longitud}</p>
+            </div>`;
+
+        marker.addListener('click', function () {
+            infoWindow.setContent(contentString);
+            infoWindow.open(map, marker);
+        });
+    });
+
+    map.fitBounds(bounds);
 }
