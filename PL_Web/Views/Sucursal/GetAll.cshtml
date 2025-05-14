@@ -27,13 +27,16 @@
         </div>
     </div>
 </div>
-
+@{
+    string llave = Session["llave"] != null ? Session["llave"].ToString() : "";
+    string ruta = $"https://maps.googleapis.com/maps/api/js?key={llave}&libraries=maps,marker";
+}
 @Scripts.Render("~/bundles/jquery")
 <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.17.2/dist/sweetalert2.all.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.17.2/dist/sweetalert2.min.css" rel="stylesheet">
 <script src="~/Scripts/Espesifics/SweetAlertManager.js"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDCt5qUAX_luLPwkcfUOJutLLavQwVFgcA&libraries=maps,marker" defer></script>
+<script src="@ruta" defer></script>
 <script>
     var urlGetAll = '@Url.Action("GetAllRest", "Sucursal")'
 </script>

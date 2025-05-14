@@ -4,16 +4,15 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Form</h2>
-
-<div class="container mt-4">
+<h2>Nueva sucursal</h2>
+<div class="container mt-3">
     <div class="row">
         <div class="col-12">
             <div class="card p-4 shadow">
                 @using(Html.BeginForm("From", "Sucursal", FormMethod.Post, new { @enctype = "multipart/form-data", @onsubmit = ""}))
                 {
                     @Html.HiddenFor(model => model.IdSucursal)
-                    <div class="row">
+                    <div class="row mb-3">
                         <div class="col-md-4 col-sm-12">
                             @Html.LabelFor(model => model.Nombre, new { @class = "form-label" })
                             @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control" })
@@ -27,7 +26,30 @@
                             @Html.TextBoxFor(model => model.Longitud, new { @class = "form-control", @disabled = "true" })
                         </div>
                     </div>
+                    <div class="card-footer bg-transparent">
+                        <div class="row mt-2">
+                            <div class="col-6 text-start">
+                                <a href="@Url.Action("GetAll", "Producto")" class="btn btn-danger">
+                                    Cancelar
+                                    <i class="bi bi-x-square-fill"></i>
+                                </a>
+                            </div>
+                            <div class="col-6 text-end">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-floppy2-fill"></i>
+                                    Guardar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 }
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card p-4 shadow">
+                <div id="sucursalMapa" class="rounded-3 shadow" style="height: 20rem;"></div>
             </div>
         </div>
     </div>
