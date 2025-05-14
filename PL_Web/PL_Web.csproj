@@ -509,6 +509,7 @@
     <Content Include="Views\ProductoStock\GetAll.cshtml" />
     <Content Include="Views\ProductoStock\_MessageNotification.cshtml" />
     <Content Include="Views\Sucursal\GetAll.cshtml" />
+    <Content Include="Views\Sucursal\Form.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

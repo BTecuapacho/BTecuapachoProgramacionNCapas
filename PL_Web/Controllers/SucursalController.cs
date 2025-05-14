@@ -21,5 +21,20 @@ namespace PL_Web.Controllers
             ML.Result result = BL.Sucursal.GetAll();
             return Json(result, JsonRequestBehavior.AllowGet);
         }
+
+        [HttpGet]
+        public ActionResult Form(int? IdSucursal)
+        {
+            ML.Sucursal sucursal = new ML.Sucursal();
+            if (IdSucursal != null)
+            {
+                ML.Result result = BL.Sucursal.GetById(IdSucursal.Value);
+                if (result.Correct)
+                {
+                    sucursal = (ML.Sucursal)result.Object;
+                }
+            }
+            return View(sucursal);
+        }
     }
 }
