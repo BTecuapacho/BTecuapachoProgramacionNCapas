@@ -41,5 +41,34 @@ namespace PL_Web.Controllers
             }
             return View(sucursal);
         }
+
+        [HttpPost]
+        public ActionResult Form(ML.Sucursal sucursal)
+        {
+            ML.Result result = new ML.Result();
+            if (sucursal.IdSucursal == 0)
+            {
+                result = BL.Sucursal.Add(sucursal);
+                ViewBag.succesMessage = "El producto se inserto de manera correcta";
+                ViewBag.result = result;
+                return PartialView("_MessageNotification");
+            }
+            else
+            {
+                result = BL.Sucursal.Update(sucursal);
+                ViewBag.succesMessage = "El producto se actualizo de manera correcta";
+                ViewBag.result = result;
+                return PartialView("_MessageNotification");
+            }
+        }
+
+        [HttpGet]
+        public ActionResult Delete(int IdSucursal)
+        {
+            ML.Result result = BL.Sucursal.Delete(IdSucursal);
+            ViewBag.succesMessage = "La sucursal se elimino de manera correcta";
+            ViewBag.result = result;
+            return PartialView("_MessageNotification");
+        }
     }
 }

@@ -170,7 +170,7 @@ namespace BL
                     {
                         dbSucursal.Nombre = sucursalIn.Nombre;
                         dbSucursal.Longitud = sucursalIn.Longitud;
-                        dbSucursal.Longitud = sucursalIn.Latitud;
+                        dbSucursal.Longitud = sucursalIn.Longitud;
                         int filasAfectadas = context.SaveChanges();
                         if (filasAfectadas > 0)
                         {

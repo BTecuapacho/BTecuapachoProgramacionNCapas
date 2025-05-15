@@ -43,16 +43,13 @@ function DrawRow(sucursal) {
             ${sucursal.Nombre}
         </td>
         <td class="text-center">
-            <button id="${sucursal.IdSucursal}" name="editStock" 
-                    class="rounded-circle btn btn-warning d-inline-flex align-items-center justify-content-center text-light m-1" 
-                    onclick="GetStock(this)">
+            <a href="/Sucursal/Form?IdSucursal=${sucursal.IdSucursal}" id="${sucursal.IdSucursal}" name="editStock" 
+                    class="rounded-circle btn btn-warning d-inline-flex align-items-center justify-content-center text-light m-1">
                 <i class="bi bi-pen-fill"></i>
-            </button>
-            <button id="${sucursal.IdSucursal}"
-                    class="rounded-circle btn btn-danger d-inline-flex align-items-center justify-content-center"
-                    onclick="CancelEdit(this)">
+            </a>
+            <a href="/Sucursal/Delete?IdSucursal=${sucursal.IdSucursal}" id="${sucursal.IdSucursal}" class="rounded-circle btn btn-danger d-inline-flex align-items-center justify-content-center" onclick="return confirm('Desea el liminar la sucursal')">
                 <i class="bi bi-trash3-fill"></i>
-            </button>
+            </a>
         </td>
     </tr>`
     $('#tbodySucursal').append(tr)
