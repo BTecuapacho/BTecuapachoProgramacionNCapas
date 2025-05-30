@@ -1,0 +1,26 @@
+﻿
+@using ReportViewerForMvc;
+@{
+    ViewBag.Title = "GetAll";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Drill Dawn</h2>
+@if (ViewBag.ReportViewer != null)
+{
+    <div class="container rounded-4">
+        <div class="row mb-4 p-4 shadow">
+            @Html.ReportViewer(ViewBag.ReportViewer as Microsoft.Reporting.WebForms.ReportViewer)
+        </div>
+    </div>
+}
+else
+{
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card p-4 shadow">
+                No se encontro ningun reporte
+            </div>
+        </div>
+    </div>
+}

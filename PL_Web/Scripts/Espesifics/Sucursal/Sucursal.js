@@ -13,13 +13,14 @@ function GetAll() {
             if (data && data.Correct) {
                 contenedor.empty()
                 if (data.Objects != 0) {
+                    contenedor.append(CuerpoMapsMarcadores())
+                    initMap(data.Objects);
+
                     contenedor.append(CuerpoGetAll())
                     $.each(data.Objects, function (contador, sucursal) {
                         sucursal.Contador = contador + 1
                         DrawRow(sucursal)
                     })
-                    contenedor.append(CuerpoMapsMarcadores())
-                    initMap(data.Objects);
                 } else {
                     contenedor.append(SinResultados())
                 }
@@ -43,11 +44,10 @@ function DrawRow(sucursal) {
             ${sucursal.Nombre}
         </td>
         <td class="text-center">
-            <a href="/Sucursal/Form?IdSucursal=${sucursal.IdSucursal}" id="${sucursal.IdSucursal}" name="editStock" 
-                    class="rounded-circle btn btn-warning d-inline-flex align-items-center justify-content-center text-light m-1">
+            <a href="/Sucursal/Form?IdSucursal=${sucursal.IdSucursal}" class="shadow btn btn-warning d-inline-flex align-items-center justify-content-center text-light m-1">
                 <i class="bi bi-pen-fill"></i>
             </a>
-            <a href="/Sucursal/Delete?IdSucursal=${sucursal.IdSucursal}" id="${sucursal.IdSucursal}" class="rounded-circle btn btn-danger d-inline-flex align-items-center justify-content-center" onclick="return confirm('Desea el liminar la sucursal')">
+            <a href="/Sucursal/Delete?IdSucursal=${sucursal.IdSucursal}" class="shadow btn btn-danger d-inline-flex align-items-center justify-content-center" onclick="return confirm('Desea el liminar la sucursal')">
                 <i class="bi bi-trash3-fill"></i>
             </a>
         </td>
@@ -57,8 +57,8 @@ function DrawRow(sucursal) {
 
 function CuerpoGetAll() {
     return `
-    <div class="col-md-6 col-sm-12 mb-4">
-        <div class="card shadow">
+    <div class="col-md-5 col-sm-12 mb-4">
+        <div class="card shadow d-flex flex-column h-100">
             <div class="border-bottom title-part-padding">
                 <h4 class="card-title my-2 text-center">Lista de sucursales</h4>
             </div>
@@ -82,8 +82,8 @@ function CuerpoGetAll() {
 
 function CuerpoMapsMarcadores() {
     return `
-    <div class="col-md-6 col-sm-12 mb-4">
-        <div class="card shadow">
+    <div class="col-md-7 col-sm-12 mb-4">
+        <div class="card shadow d-flex flex-column h-100">
             <div class="border-bottom title-part-padding">
                 <h4 class="card-title my-2 text-center">Mapa de sucursales</h4>
             </div>
@@ -136,6 +136,19 @@ function initMap(sucursales) {
             <div class="info_content">
                 <h3>${sucursal.Nombre}</h3>
                 <p>Lat: ${sucursal.Latitud}, Lng: ${sucursal.Longitud}</p>
+                <div class="row mb-3">
+                    <div class="col-6 text-start">
+                        <a href="/Sucursal/Form?IdSucursal=${sucursal.IdSucursal}" name="editStock" 
+                            class="btn btn-warning d-inline-flex align-items-center justify-content-center text-light m-1">
+                            <i class="bi bi-pen-fill"></i>
+                        </a>
+                    </div>
+                    <div class="col-6 text-end">
+                        <a href="/Sucursal/Delete?IdSucursal=${sucursal.IdSucursal}" class="btn btn-danger d-inline-flex align-items-center justify-content-center" onclick="return confirm('Desea el liminar la sucursal')">
+                            <i class="bi bi-trash3-fill"></i>
+                        </a>
+                    </div>
+                </div>
             </div>`;
 
         marker.addListener('click', function () {

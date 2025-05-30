@@ -7,23 +7,28 @@
 <h2>Nueva sucursal</h2>
 <div class="container mt-3">
     <div class="row">
-        <div class="col-12">
-            <div class="card p-4 shadow">
+        <div class="col-md-8 col-sm-12 mt-4">
+            <div class="card p-4 shadow d-flex flex-column h-100">
+                <div id="sucursalMapa" class="rounded-3 shadow" style="height: 22rem;"></div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12 mt-4">
+            <div class="card p-4 shadow d-flex flex-column h-100">
                 @using (Html.BeginForm("Form", "Sucursal", FormMethod.Post, new { @enctype = "multipart/form-data", @onsubmit = "Enviar(event)" }))
                 {
                     @Html.HiddenFor(model => model.IdSucursal)
-                    <div class="row mb-3">
-                        <div class="col-md-4 col-sm-12">
-                            @Html.LabelFor(model => model.Nombre, new { @class = "form-label", @id="IdSucursal" })
-                            @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control", @id = "Nombre" })
+                    <div class="card-body bg-transparent">
+                        <div class="row mb-3">
+                                @Html.LabelFor(model => model.Nombre, new { @class = "form-label", @id = "IdSucursal" })
+                                @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control", @id = "Nombre" })
                         </div>
-                        <div class="col-md-4 col-sm-12">
-                            @Html.LabelFor(model => model.Latitud, new { @class = "form-label", @id="IdSucursal"  })
-                            @Html.TextBoxFor(model => model.Latitud, new { @class = "form-control", @id = "Latitud", @placeholder="Solo ponga la ubicación", @readonly = "readonly" })
+                        <div class="row mb-3">
+                            @Html.LabelFor(model => model.Latitud, new { @class = "form-label", @id = "IdSucursal" })
+                            @Html.TextBoxFor(model => model.Latitud, new { @class = "form-control", @id = "Latitud", @placeholder = "Solo ponga la ubicación", @readonly = "readonly" })
                         </div>
-                        <div class="col-md-4 col-sm-12">
+                        <div class="row mb-3">
                             @Html.LabelFor(model => model.Longitud, new { @class = "form-label" })
-                            @Html.TextBoxFor(model => model.Longitud, new { @class = "form-control", @id = "Longitud", @placeholder="Solo ponga la ubicación", @readonly = "readonly" })
+                            @Html.TextBoxFor(model => model.Longitud, new { @class = "form-control", @id = "Longitud", @placeholder = "Solo ponga la ubicación", @readonly = "readonly" })
                         </div>
                     </div>
                     <div class="card-footer bg-transparent">
@@ -46,13 +51,8 @@
             </div>
         </div>
     </div>
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card p-4 shadow">
-                <div id="sucursalMapa" class="rounded-3 shadow" style="height: 20rem;"></div>
-            </div>
-        </div>
-    </div>
+    @*<div class="row ">
+    </div>*@
 </div>
 
 

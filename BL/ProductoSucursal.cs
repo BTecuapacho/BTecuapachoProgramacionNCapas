@@ -142,5 +142,60 @@ namespace BL
             }
             return result;
         }
+
+        public static ML.Result GetAllReportingService()
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                using (DL_EF.BTecuapachoProgramacionNCapasEntities context = new DL_EF.BTecuapachoProgramacionNCapasEntities())
+                {
+                    var ProductosSucursales = (from ProductoSucursal in context.ProductoSucursals
+                                               join Producto in context.Productoes on ProductoSucursal.IdProducto equals Producto.IdProducto
+                                               join Sucursal in context.Sucursals on ProductoSucursal.IdSucursal equals Sucursal.IdSucursal
+                                               select new
+                                               {
+                                                   IdProductoSucursal = ProductoSucursal.IdProductoSucursal,
+                                                   IdProducto = Producto.IdProducto,
+                                                   NombreProducto = Producto.Nombre,
+                                                   IdSucursal = Sucursal.IdSucursal,
+                                                   NombreSucursal = Sucursal.Nombre,
+                                                   Descripcion = Producto.Descripcion,
+                                                   Precio = Producto.Precio
+                                               }).ToList();
+                    if (ProductosSucursales.Count != 0)
+                    {
+                        result.Objects = new List<object>();
+                        foreach (var dbProductoSucursal in ProductosSucursales)
+                        {
+                            ML.ProductoSucursal productoSucursal = new ML.ProductoSucursal
+                            {
+                                Producto = new ML.Producto(),
+                                Sucursal = new ML.Sucursal()
+                            };
+                            productoSucursal.IdProductoSucursal = Convert.ToInt32(dbProductoSucursal.IdProductoSucursal);
+                            productoSucursal.Producto.IdProducto = Convert.ToInt32(dbProductoSucursal.IdProducto);
+                            productoSucursal.Producto.Nombre = dbProductoSucursal.NombreProducto;
+                            productoSucursal.Sucursal.IdSucursal = Convert.ToInt32(dbProductoSucursal.IdSucursal);
+                            productoSucursal.Sucursal.Nombre = dbProductoSucursal.NombreSucursal;
+                            productoSucursal.Producto.Descripcion = dbProductoSucursal.Descripcion;
+                            productoSucursal.Producto.Precio = Convert.ToDecimal(dbProductoSucursal.Precio);
+
+                            result.Objects.Add(productoSucursal);
+                        }
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false; result.ErrorMessage = "No se encontraron Datos/Registros.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false; result.Exception = ex; result.ErrorMessage = ex.Message;
+            }
+            return result;
+        }
     }
 }
